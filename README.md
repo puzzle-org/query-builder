@@ -17,8 +17,7 @@ Use composer :
 QA
 --
 
-TO DO Change Links
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/0e783570-3294-4720-9ef5-d78810f560ff/big.png)](https://insight.sensiolabs.com/projects/0e783570-3294-4720-9ef5-d78810f560ff)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/c92f128d-58dd-4867-8121-16c523f6da75/big.png)](https://insight.sensiolabs.com/projects/c92f128d-58dd-4867-8121-16c523f6da75)
 
 Service | Result
 --- | ---
