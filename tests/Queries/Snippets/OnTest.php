@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class OnTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class OnTest extends TestCase
 {
     /**
      * @dataProvider providerTestOn
      */
     public function testOn($expected, $leftColumn, $rightColumn)
     {
-        $part = new Snippets\On($leftColumn, $rightColumn);
+        $part = new On($leftColumn, $rightColumn);
 
         $this->assertSame($expected, $part->toString());
     }

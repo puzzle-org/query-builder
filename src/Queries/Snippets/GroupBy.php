@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class GroupBy implements Snippet
 {
@@ -14,7 +16,7 @@ class GroupBy implements Snippet
         $this->groupBy = array();
     }
 
-    public function addGroupBy($column)
+    public function addGroupBy(?string $column): self
     {
         if(!empty($column))
         {
@@ -24,7 +26,7 @@ class GroupBy implements Snippet
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->groupBy))
         {

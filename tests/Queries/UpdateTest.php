@@ -1,24 +1,34 @@
 <?php
 
-use Muffin\Queries;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
-use Muffin\Queries\Snippets\OrderBy;
+declare(strict_types = 1);
 
-class UpdateTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use Puzzle\QueryBuilder\Queries\Snippets\OrderBy;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TString;
+
+class UpdateTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
+    }
+
+    private function newUpdate(?string $table = null, ?string $alias = null): Update
+    {
+        return (new Update($table, $alias))->setEscaper($this->escaper);
     }
 
     public function testUpdateUsingConstructor()
     {
-        $query = (new Queries\Update('burger'))->setEscaper($this->escaper);
+        $query = $this->newUpdate('burger');
 
         $query
             ->set(array('taste' => 'cheese'))
@@ -29,8 +39,8 @@ class UpdateTest extends PHPUnit_Framework_TestCase
         $this->assertSame("UPDATE burger SET taste = 'cheese', vegan = 0, name = 'The big one'", $query->toString($this->escaper));
 
         $query
-            ->where(new Conditions\Greater(new Types\Integer('score'), 1337))
-            ->where(new Conditions\Equal(new Types\String('author'), 'julian'))
+            ->where(new Conditions\Greater(new TInt('score'), 1337))
+            ->where(new Conditions\Equal(new TString('author'), 'julian'))
         ;
 
         $this->assertSame("UPDATE burger SET taste = 'cheese', vegan = 0, name = 'The big one' WHERE score > 1337 AND author = 'julian'", $query->toString($this->escaper));
@@ -46,7 +56,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
     public function testSimpleUpdateUsingSetter()
     {
-        $query = (new Queries\Update())->setEscaper($this->escaper);
+        $query = $this->newUpdate();
 
         $query
             ->update('burger')
@@ -58,7 +68,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateWithJoin()
     {
-        $query = (new Queries\Update('burger', 'b'))->setEscaper($this->escaper);
+        $query = $this->newUpdate('burger', 'b');
 
         $query
             ->innerjoin('taste', 't')->on('b.taste_id', 't.id')
@@ -67,7 +77,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame("UPDATE burger AS b INNER JOIN taste AS t ON b.taste_id = t.id SET date = '2014-03-07 13:37:42'", $query->toString($this->escaper));
 
-        $query = (new Queries\Update('burger', 'b'))->setEscaper($this->escaper);
+        $query = $this->newUpdate('burger', 'b');
 
         $query
             ->leftJoin('taste', 't')->on('b.taste_id', 't.id')
@@ -76,7 +86,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame("UPDATE burger AS b LEFT JOIN taste AS t ON b.taste_id = t.id SET date = '2014-03-07 13:37:42'", $query->toString($this->escaper));
 
-        $query = (new Queries\Update('burger', 'b'))->setEscaper($this->escaper);
+        $query = $this->newUpdate('burger', 'b');
 
         $query
             ->rightJoin('taste', 't')->on('b.taste_id', 't.id')
@@ -88,13 +98,13 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateMultipleTable()
     {
-        $query = (new Queries\Update())->setEscaper($this->escaper);
+        $query = $this->newUpdate();
 
         $query
             ->update('burger', 'b')
             ->update('poney', 'p')
             ->set(array('date' => '2014-03-07 13:37:42'))
-            ->where(new Conditions\In(new Types\String('author'), array('julian', 'claude')))
+            ->where(new Conditions\In(new TString('author'), array('julian', 'claude')))
         ;
 
         $this->assertSame("UPDATE burger AS b, poney AS p SET date = '2014-03-07 13:37:42' WHERE author IN ('julian', 'claude')", $query->toString($this->escaper));
@@ -105,7 +115,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdateWithoutTable()
     {
-        $query = (new Queries\Update())->setEscaper($this->escaper);
+        $query = $this->newUpdate();
 
         $query
             ->set(array('date' => '2014-03-07 13:37:42'))

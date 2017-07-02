@@ -1,10 +1,11 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
-use Muffin\Condition;
-use Muffin\Query;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Query;
 
 class Statement extends AbstractCondition
 {
@@ -16,7 +17,7 @@ class Statement extends AbstractCondition
         $this->statement = $statement;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->isEmpty())
         {
@@ -29,18 +30,18 @@ class Statement extends AbstractCondition
         {
             $this->statement->setEscaper($escaper);
 
-            $statement = $this->wrapWithParenthese($this->statement->toString());
+            $statement = $this->wrapWithParenthesis($this->statement->toString());
         }
 
         return (string) $statement;
     }
 
-    private function wrapWithParenthese($value)
+    private function wrapWithParenthesis(string $value): string
     {
         return sprintf('(%s)', $value);
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->statement);
     }

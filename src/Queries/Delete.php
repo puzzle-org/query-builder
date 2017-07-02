@@ -1,12 +1,13 @@
 <?php
 
-namespace Muffin\Queries;
+declare(strict_types = 1);
 
-use Muffin\Query;
-use Muffin\Condition;
-use Muffin\Traits\EscaperAware;
-use Muffin\Snippet;
-use Muffin\Queries\Snippets\Builders;
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Query;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Queries\Snippets\Builders;
 
 class Delete implements Query
 {
@@ -20,7 +21,10 @@ class Delete implements Query
     private
         $from;
 
-    public function __construct($table = null, $alias = null)
+    /**
+     * @param TableName|string $table
+     */
+    public function __construct($table = null, ?string $alias = null)
     {
         if(!empty($table))
         {
@@ -31,7 +35,7 @@ class Delete implements Query
         $this->orderBy = new Snippets\OrderBy();
     }
 
-    public function toString()
+    public function toString(): string
     {
         $queryParts = array(
             'DELETE',
@@ -45,14 +49,17 @@ class Delete implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    public function from($table, $alias = null)
+    /**
+     * @param TableName|string $table
+     */
+    public function from($table, ?string $alias = null): self
     {
         $this->from = new Snippets\From($table, $alias);
 
         return $this;
     }
 
-    private function buildFrom()
+    private function buildFrom(): string
     {
         if(!$this->from instanceof Snippet)
         {

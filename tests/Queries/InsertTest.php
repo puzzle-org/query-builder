@@ -1,23 +1,25 @@
 <?php
 
-use Muffin\Queries;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class InsertTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+
+class InsertTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     public function testInsertUsingConstructor()
     {
-        $query = (new Queries\Insert('burger'))->setEscaper($this->escaper);
+        $query = (new Insert('burger'))->setEscaper($this->escaper);
 
         $query->values(array(
             'id' => 666,
@@ -40,7 +42,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testInsertUsingHelper()
     {
-        $query = (new Queries\Insert())->setEscaper($this->escaper);
+        $query = (new Insert())->setEscaper($this->escaper);
 
         $query
             ->insert('burger')

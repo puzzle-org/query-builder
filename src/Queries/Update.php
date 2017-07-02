@@ -1,12 +1,12 @@
 <?php
 
-namespace Muffin\Queries;
+declare(strict_types = 1);
 
-use Muffin\Query;
-use Muffin\Condition;
-use Muffin\Traits\EscaperAware;
-use Muffin\Snippet;
-use Muffin\Queries\Snippets\Builders;
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Query;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Queries\Snippets\Builders;
 
 class Update implements Query
 {
@@ -21,7 +21,10 @@ class Update implements Query
         $updatePart,
         $sets;
 
-    public function __construct($table = null, $alias = null)
+    /**
+     * @param Snippets\TableName|string|null $table
+     */
+    public function __construct($table = null, ?string $alias = null)
     {
         $this->updatePart = new Snippets\Update();
         $this->where = new Snippets\Where();
@@ -34,7 +37,7 @@ class Update implements Query
         }
     }
 
-    public function toString()
+    public function toString(): string
     {
         $queryParts = array(
             $this->buildUpdate(),
@@ -48,21 +51,24 @@ class Update implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    public function update($table, $alias = null)
+    /**
+     * @param Snippets\TableName|string $table
+     */
+    public function update($table, ?string $alias = null): self
     {
         $this->updatePart->addTable($table, $alias);
 
         return $this;
     }
 
-    public function set(array $fields)
+    public function set(array $fields): self
     {
         $this->sets->set($fields);
 
         return $this;
     }
 
-    private function buildUpdate()
+    private function buildUpdate(): string
     {
         $updateString = $this->updatePart->toString();
 
@@ -74,7 +80,7 @@ class Update implements Query
         return $updateString;
     }
 
-    private function buildSets()
+    private function buildSets(): string
     {
         $this->sets->setEscaper($this->escaper);
 

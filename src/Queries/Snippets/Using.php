@@ -1,22 +1,31 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\Pieces\StringManipulation;
 
 class Using implements Snippet
 {
+    use StringManipulation;
+
     private
         $columns;
 
+    /**
+     * @param array[string]|string $column
+     */
     public function __construct($column)
     {
-        $this->columns = $this->ensureIsArray($column);
+        $this->columns = $this->convertToArray($column);
     }
 
-    public function toString()
+    public function toString(): string
     {
         $usingColumns = implode(', ', array_filter($this->columns));
+
         if(empty($usingColumns))
         {
             return '';
@@ -28,10 +37,15 @@ class Using implements Snippet
         );
     }
 
-    private function ensureIsArray($input)
+    private function convertToArray($input): array
     {
         if(! is_array($input))
         {
+            if(! $this->isConvertibleToString($input))
+            {
+                throw new \InvalidArgumentException("Using argument must be a string (or an array of string)");
+            }
+
             $input = array($input);
         }
 

@@ -1,9 +1,11 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
-use Muffin\Type;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Type;
 
 abstract class AbstractNullComparisonCondition extends AbstractCondition
 {
@@ -20,7 +22,7 @@ abstract class AbstractNullComparisonCondition extends AbstractCondition
         $this->column = (string) $column;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if(empty($this->column))
         {
@@ -33,10 +35,10 @@ abstract class AbstractNullComparisonCondition extends AbstractCondition
         );
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->column);
     }
 
-    abstract protected function getOperator();
+    abstract protected function getOperator(): string;
 }

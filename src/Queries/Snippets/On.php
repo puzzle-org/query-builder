@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class On implements Snippet
 {
@@ -10,13 +12,13 @@ class On implements Snippet
         $leftColumn,
         $rightColumn;
 
-    public function __construct($leftColumn, $rightColumn)
+    public function __construct(?string $leftColumn, ?string $rightColumn)
     {
         $this->leftColumn = (string) $leftColumn;
         $this->rightColumn = (string) $rightColumn;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->leftColumn) || empty($this->rightColumn))
         {

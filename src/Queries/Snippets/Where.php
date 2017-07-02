@@ -1,10 +1,12 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
-use Muffin\Condition;
-use Muffin\Traits\EscaperAware;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
 
 class Where implements Snippet
 {
@@ -23,14 +25,14 @@ class Where implements Snippet
         }
     }
 
-    public function where(Condition $condition)
+    public function where(Condition $condition): self
     {
         $this->addCondition($condition);
 
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         $conditionString = $this->buildConditionString();
         if(empty($conditionString))
@@ -41,7 +43,7 @@ class Where implements Snippet
         return sprintf('WHERE %s', $conditionString);
     }
 
-    private function buildConditionString()
+    private function buildConditionString(): string
     {
         $whereConditions = array();
         foreach($this->conditions as $condition)
@@ -56,7 +58,7 @@ class Where implements Snippet
         return implode(' AND ', $whereConditions);
     }
 
-    private function addCondition(Condition $condition)
+    private function addCondition(Condition $condition): void
     {
         $this->conditions[] = $condition;
     }

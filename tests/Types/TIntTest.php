@@ -1,24 +1,19 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class IntegerTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use PHPUnit\Framework\TestCase;
+
+class TIntTest extends TestCase
 {
-    protected
-        $escaper;
-
-    protected function setUp()
-    {
-        $this->escaper = new SimpleEscaper();
-    }
-
     /**
      * @dataProvider providerTestFormatInt
      */
     public function testFormatInt($expected, $value)
     {
-        $type = new Types\Integer('column_name');
+        $type = new TInt('column_name');
 
         $this->assertSame($expected, $type->format($value));
     }

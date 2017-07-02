@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class UsingTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class UsingTest extends TestCase
 {
     /**
      * @dataProvider providerTestUsing
      */
     public function testUsing($expected, $columns)
     {
-        $part = new Snippets\Using($columns);
+        $part = new Using($columns);
 
         $this->assertSame($expected, $part->toString());
     }

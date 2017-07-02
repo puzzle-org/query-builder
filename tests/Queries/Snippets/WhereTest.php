@@ -1,19 +1,24 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Condition;
-use Muffin\Conditions;
-use Muffin\Queries\Snippets;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class WhereTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TString;
+
+class WhereTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -21,7 +26,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
      */
     public function testWhere($expected, Condition $condition)
     {
-        $where = new Snippets\Where($condition);
+        $where = new Where($condition);
         $where->setEscaper($this->escaper);
 
         $this->assertSame($expected, $where->toString());
@@ -30,10 +35,10 @@ class WhereTest extends PHPUnit_Framework_TestCase
     public function providerTestWhere()
     {
         return array(
-            'empty condition' => array('', new Conditions\Equal(new Types\String(''), '')),
-            'simple string condition #1' => array("WHERE name = 'burger'", new Conditions\Equal(new Types\String('name'), 'burger')),
-            'simple string condition #2' => array("WHERE name = '666'", new Conditions\Equal(new Types\String('name'), '666')),
-            'simple int condition' => array("WHERE name = 666", new Conditions\Equal(new Types\Integer('name'), 666)),
+            'empty condition' => array('', new Conditions\Equal(new TString(''), '')),
+            'simple string condition #1' => array("WHERE name = 'burger'", new Conditions\Equal(new TString('name'), 'burger')),
+            'simple string condition #2' => array("WHERE name = '666'", new Conditions\Equal(new TString('name'), '666')),
+            'simple int condition' => array("WHERE name = 666", new Conditions\Equal(new TInt('name'), 666)),
         );
     }
 }

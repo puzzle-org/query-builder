@@ -1,6 +1,8 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
+
+namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 interface Join
 {

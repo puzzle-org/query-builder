@@ -1,32 +1,40 @@
 <?php
 
-namespace Muffin\Traits;
+declare(strict_types = 1);
 
-use Muffin\Types;
+namespace Puzzle\QueryBuilder\Traits;
+
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TBool;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TFloat;
+use Puzzle\QueryBuilder\Types\TDatetime;
+use Puzzle\QueryBuilder\Type;
 
 trait TypeGuesser
 {
-    private function guessType($columnName, $value)
+    private function guessType(string $columnName, $value): Type
     {
-        $type = new Types\String($columnName);
+        $type = new TString($columnName);
+
         if(is_bool($value))
         {
-            $type = new Types\Boolean($columnName);
+            $type = new TBool($columnName);
         }
 
         if(is_int($value))
         {
-            $type = new Types\Integer($columnName);
+            $type = new TInt($columnName);
         }
 
         if(is_float($value))
         {
-            $type = new Types\Float($columnName);
+            $type = new TFloat($columnName);
         }
 
         if($value instanceof \DateTime)
         {
-            $type = new Types\Datetime($columnName);
+            $type = new TDatetime($columnName);
         }
 
         return $type;

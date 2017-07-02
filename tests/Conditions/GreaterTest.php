@@ -1,19 +1,26 @@
 <?php
 
-use Muffin\Type;
-use Muffin\Types;
-use Muffin\Conditions;
-use Muffin\Tests\Escapers\SimpleEscaper;
-use Muffin\Types\Datetime;
+declare(strict_types = 1);
 
-class GreaterTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Type;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TBool;
+use Puzzle\QueryBuilder\Types\TDatetime;
+use Puzzle\QueryBuilder\Types\TFloat;
+
+class GreaterTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -21,7 +28,7 @@ class GreaterTest extends PHPUnit_Framework_TestCase
      */
     public function testGreater($expected, Type $column, $value)
     {
-        $condition = new Conditions\Greater($column, $value);
+        $condition = new Greater($column, $value);
 
         $this->assertSame($expected, $condition->toString($this->escaper));
     }
@@ -29,22 +36,22 @@ class GreaterTest extends PHPUnit_Framework_TestCase
     public function providerTestGreater()
     {
         return array(
-            'null integer' => array("rank > 0", new Types\Integer('rank'), null),
-            'integer zero' => array("rank > 0", new Types\Integer('rank'), 0),
+            'null integer' => array("rank > 0", new TInt('rank'), null),
+            'integer zero' => array("rank > 0", new TInt('rank'), 0),
 
-            'integer' => array("rank > 1337", new Types\Integer('rank'), 1337),
-            'integer in string' => array("rank > 42", new Types\Integer('rank'), '42'),
+            'integer' => array("rank > 1337", new TInt('rank'), 1337),
+            'integer in string' => array("rank > 42", new TInt('rank'), '42'),
 
-            'empty string' => array("score > ''", new Types\String('score'), ''),
-            'integer as string' => array("score > '666'", new Types\String('score'), '666'),
-            'string' => array("score > 'unicorn'", new Types\String('score'), 'unicorn'),
+            'empty string' => array("score > ''", new TString('score'), ''),
+            'integer as string' => array("score > '666'", new TString('score'), '666'),
+            'string' => array("score > 'unicorn'", new TString('score'), 'unicorn'),
 
-            'simple datetime' => array("date > '2014-03-07 14:18:42'", new Types\Datetime('date'), '2014-03-07 14:18:42'),
-            'empty datetime' => array("date > ''", new Types\Datetime('date'), ''),
+            'simple datetime' => array("date > '2014-03-07 14:18:42'", new TDatetime('date'), '2014-03-07 14:18:42'),
+            'empty datetime' => array("date > ''", new TDatetime('date'), ''),
 
-            'float' => array("rank > 13.37", new Types\Float('rank'), 13.37),
+            'float' => array("rank > 13.37", new TFloat('rank'), 13.37),
 
-            'empty column name' => array('', new Types\String(''), 'poney'),
+            'empty column name' => array('', new TString(''), 'poney'),
         );
     }
 
@@ -53,7 +60,7 @@ class GreaterTest extends PHPUnit_Framework_TestCase
      */
     public function testFieldGreaterThanField($expected, $columnLeft, $columnRight)
     {
-        $condition = new Conditions\Greater($columnLeft, $columnRight);
+        $condition = new Greater($columnLeft, $columnRight);
 
         $this->assertSame($expected, $condition->toString($this->escaper));
     }
@@ -61,12 +68,12 @@ class GreaterTest extends PHPUnit_Framework_TestCase
     public function providerTestFieldGreaterThanField()
     {
         return array(
-            array('pony > unicorn', new Types\String('pony'), new Types\String('unicorn'),),
-            array('pony > id', new Types\String('pony'), new Types\Integer('id'),),
-            array('id > pony', new Types\Integer('id'), new Types\String('pony'),),
-            array('id > ponyId', new Types\Integer('id'), new Types\Integer('ponyId'),),
-            array('creationDate > updateDate', new Types\Datetime('creationDate'), new Types\Datetime('updateDate'),),
-            array('good > evil', new Types\Boolean('good'), new Types\Boolean('evil'),),
+            array('pony > unicorn', new TString('pony'), new TString('unicorn'),),
+            array('pony > id', new TString('pony'), new TInt('id'),),
+            array('id > pony', new TInt('id'), new TString('pony'),),
+            array('id > ponyId', new TInt('id'), new TInt('ponyId'),),
+            array('creationDate > updateDate', new TDatetime('creationDate'), new TDatetime('updateDate'),),
+            array('good > evil', new TBool('good'), new TBool('evil'),),
         );
     }
 }

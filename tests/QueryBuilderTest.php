@@ -1,27 +1,37 @@
 <?php
 
-use Muffin\QueryBuilder;
-use Muffin\Queries;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
-use Muffin\Queries\Snippets\Distinct;
+declare(strict_types = 1);
 
-class QueryBuilderTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder;
+
+use Puzzle\QueryBuilder\QueryBuilder;
+use Puzzle\QueryBuilder\Queries;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use Puzzle\QueryBuilder\Queries\Snippets\Distinct;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Types\TString;
+
+class QueryBuilderTest extends TestCase
 {
-    protected
-        $escaper;
+    use EscaperAware;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->setEscaper(new AlwaysQuoteEscaper());
+    }
+
+    private function newQueryBuilder()
+    {
+        return (new QueryBuilder())->setEscaper($this->escaper);
     }
 
     public function testDelete()
     {
-        $qb = (new QueryBuilder())->setEscaper($this->escaper);
+        $qb = $this->newQueryBuilder();
 
-        $condition = new Conditions\Different(new TYpes\String('taste'), 'burger');
+        $condition = new Conditions\Different(new TString('taste'), 'burger');
 
         $query = $qb->delete('poney')->where($condition);
 
@@ -34,7 +44,7 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testInsert()
     {
-        $qb = (new QueryBuilder())->setEscaper($this->escaper);
+        $qb = $this->newQueryBuilder();
 
         $values = array(
             'id' => 42,
@@ -53,7 +63,7 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $qb = (new QueryBuilder())->setEscaper($this->escaper);
+        $qb = $this->newQueryBuilder();
 
         $fields = array('taste' => 'burger');
 
@@ -68,7 +78,7 @@ class QueryBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testSelect()
     {
-        $qb = (new QueryBuilder())->setEscaper($this->escaper);
+        $qb = $this->newQueryBuilder();
 
         $query = $qb
             ->select(array(

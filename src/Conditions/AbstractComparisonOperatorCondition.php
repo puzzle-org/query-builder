@@ -1,9 +1,11 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
-use Muffin\Type;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Type;
 
 abstract class AbstractComparisonOperatorCondition extends AbstractCondition
 {
@@ -17,7 +19,7 @@ abstract class AbstractComparisonOperatorCondition extends AbstractCondition
         $this->rightOperand = $rightOperand;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->isEmpty())
         {
@@ -32,7 +34,7 @@ abstract class AbstractComparisonOperatorCondition extends AbstractCondition
         );
     }
 
-    private function generateFieldOperand(Type $field)
+    private function generateFieldOperand(Type $field): string
     {
         return $field->getName();
     }
@@ -47,14 +49,14 @@ abstract class AbstractComparisonOperatorCondition extends AbstractCondition
         return $this->escapeValue($this->rightOperand, $escaper);
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $columnName = $this->leftOperand->getName();
 
         return empty($columnName);
     }
 
-    abstract protected function getConditionOperator();
+    abstract protected function getConditionOperator(): string;
 
     private function escapeValue($value, Escaper $escaper)
     {

@@ -1,9 +1,11 @@
 <?php
 
-namespace Muffin\Queries;
+declare(strict_types = 1);
 
-use Muffin\Query;
-use Muffin\Traits\EscaperAware;
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Query;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
 
 class Insert implements Query
 {
@@ -13,17 +15,17 @@ class Insert implements Query
         $insertPart,
         $valuesPart;
 
-    public function __construct($table = null)
+    public function __construct(?string $table = null)
     {
         $this->valuesPart = new Snippets\Values();
 
         if(! empty($table))
         {
-            $this->insertPart = new Snippets\TableName($table);
+            $this->insert($table);
         }
     }
 
-    public function toString()
+    public function toString(): string
     {
         $queryParts = array(
             $this->buildInsertString(),
@@ -33,26 +35,26 @@ class Insert implements Query
         return implode(' ', $queryParts);
     }
 
-    public function insert($table)
+    public function insert(?string $table): self
     {
         $this->insertPart = new Snippets\TableName($table);
 
         return $this;
     }
 
-    public function values(array $values)
+    public function values(array $values): self
     {
         $this->valuesPart->values($values);
 
         return $this;
     }
 
-    private function buildInsertString()
+    private function buildInsertString(): string
     {
         return sprintf('INSERT INTO %s', $this->insertPart->toString());
     }
 
-    private function buildValuesString()
+    private function buildValuesString(): string
     {
         $this->valuesPart->setEscaper($this->escaper);
 

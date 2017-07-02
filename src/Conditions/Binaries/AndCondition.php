@@ -1,12 +1,14 @@
 <?php
 
-namespace Muffin\Conditions\Binaries;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
+namespace Puzzle\QueryBuilder\Conditions\Binaries;
+
+use Puzzle\QueryBuilder\Escaper;
 
 class AndCondition extends AbstractCompositeCondition
 {
-    protected function buildCondition(Escaper $escaper)
+    protected function buildCondition(Escaper $escaper): string
     {
         return sprintf(
             '%s AND %s',

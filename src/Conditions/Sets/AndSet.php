@@ -1,13 +1,16 @@
 <?php
 
-namespace Muffin\Conditions\Sets;
+declare(strict_types = 1);
 
-use Muffin\Condition;
+namespace Puzzle\QueryBuilder\Conditions\Sets;
+
+use Puzzle\QueryBuilder\Condition;
 
 class AndSet extends AbstractSet
 {
-    protected function joinConditions(Condition $leftCondition, Condition $rightCondition)
+    protected function joinConditions(Condition $leftCondition, Condition $rightCondition): Condition
     {
+        // FIXME or is not defined in Condition interface (it works only if the Condition impl extends AbstractCondition)
         return $leftCondition->and($rightCondition);
     }
 }

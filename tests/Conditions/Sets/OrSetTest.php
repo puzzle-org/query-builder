@@ -1,19 +1,24 @@
 <?php
 
-use Muffin\Condition;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Conditions\Sets\OrSet;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class OrSetTest extends \PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions\Sets;
+
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TString;
+
+class OrSetTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -33,9 +38,9 @@ class OrSetTest extends \PHPUnit_Framework_TestCase
 
     public function providerTestToString()
     {
-        $equal42 = new Conditions\Equal(new Types\Integer('id'), 42);
-        $equal51 = new Conditions\Equal(new Types\Integer('id'), 51);
-        $burger = new Conditions\Equal(new Types\String('meal'), 'burger');
+        $equal42 = new Conditions\Equal(new TInt('id'), 42);
+        $equal51 = new Conditions\Equal(new TInt('id'), 51);
+        $burger = new Conditions\Equal(new TString('meal'), 'burger');
         $set = (new OrSet)->add($equal42)->add($equal51);
         $emptySet = new OrSet();
 
@@ -79,13 +84,13 @@ class OrSetTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'empty set' => array(null, true),
-            'simple condition' => array(new Conditions\Equal(new Types\Integer('id'), 51), false),
+            'simple condition' => array(new Conditions\Equal(new TInt('id'), 51), false),
             'composite of empty sets' => array(new Conditions\Binaries\OrCondition(new OrSet(), new OrSet()), true),
-            'composite with not empty condition' => array(new Conditions\Binaries\OrCondition(new OrSet(), new Conditions\Equal(new Types\Integer('id'), 51)), false),
+            'composite with not empty condition' => array(new Conditions\Binaries\OrCondition(new OrSet(), new Conditions\Equal(new TInt('id'), 51)), false),
             'set of empty set #1' => array(new OrSet(), true),
             'set of empty set #2' => array((new OrSet)->add(new OrSet()), true),
             'set of empty set #3' => array((new OrSet)->add(new OrSet())->add(new OrSet()), true),
-            'set of not empty set' => array((new OrSet())->add(new Conditions\Equal(new Types\Integer('id'), 51)), false),
+            'set of not empty set' => array((new OrSet())->add(new Conditions\Equal(new TInt('id'), 51)), false),
         );
     }
 }

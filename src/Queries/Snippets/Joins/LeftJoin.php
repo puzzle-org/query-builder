@@ -1,12 +1,14 @@
 <?php
 
-namespace Muffin\Queries\Snippets\Joins;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets\Joins;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class LeftJoin extends AbstractJoin implements Snippet
 {
-    protected function getJoinDeclaration()
+    protected function getJoinDeclaration(): string
     {
         return 'LEFT JOIN';
     }

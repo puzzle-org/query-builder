@@ -1,36 +1,38 @@
 <?php
 
-namespace Muffin\Queries\Snippets\Builders;
+declare(strict_types = 1);
 
-use Muffin\Queries\Snippets;
+namespace Puzzle\QueryBuilder\Queries\Snippets\Builders;
+
+use Puzzle\QueryBuilder\Queries\Snippets;
 
 trait Join
 {
     protected
         $joins = array();
 
-    public function innerJoin($table, $alias = null)
+    public function innerJoin(string $table, ?string $alias = null): self
     {
         $this->joins[] = new Snippets\Joins\InnerJoin($table, $alias);
 
         return $this;
     }
 
-    public function leftJoin($table, $alias = null)
+    public function leftJoin(string $table, ?string $alias = null): self
     {
         $this->joins[] = new Snippets\Joins\LeftJoin($table, $alias);
 
         return $this;
     }
 
-    public function rightJoin($table, $alias = null)
+    public function rightJoin(string $table, ?string $alias = null): self
     {
         $this->joins[] = new Snippets\Joins\RightJoin($table, $alias);
 
         return $this;
     }
 
-    public function on($leftColumn, $rightColumn)
+    public function on(string $leftColumn, string $rightColumn): self
     {
         $join = $this->getLastJoin();
         $join->on($leftColumn, $rightColumn);
@@ -38,7 +40,10 @@ trait Join
         return $this;
     }
 
-    public function using($column)
+    /**
+     * @param array[string]|string $column
+     */
+    public function using($column): self
     {
         $join = $this->getLastJoin();
         $join->using($column);
@@ -46,9 +51,9 @@ trait Join
         return $this;
     }
 
-    protected function buildJoin()
+    protected function buildJoin(): string
     {
-        $joins = array();
+        $joins = [];
 
         foreach($this->joins as $innerJoin)
         {
@@ -58,7 +63,7 @@ trait Join
         return implode(' ', $joins);
     }
 
-    private function getLastJoin()
+    private function getLastJoin(): Snippets\Join
     {
         $lastJoins = end($this->joins);
 

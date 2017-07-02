@@ -1,73 +1,87 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Conditions;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class TypeHelpersTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Condition;
+
+class TypeHelpersTest extends TestCase
 {
-    protected
-        $escaper;
-
-    protected function setUp()
+    /**
+     * @dataProvider providerTestHelper
+     */
+    public function testHelper(Condition $explicit, Condition $helper)
     {
-        $this->escaper = new SimpleEscaper();
+        $escaper = new AlwaysQuoteEscaper();
+
+        $this->assertEquals(
+            $explicit->toString($escaper),
+            $helper->toString($escaper)
+        );
     }
 
-    public function testHelper()
+    public function providerTestHelper()
     {
-        $field = new Types\String('burger');
-        $equal = new Conditions\Equal($field, 'poney');
-        $different = new Conditions\Different($field, 'poney');
-        $like = new Conditions\Like($field, 'poney');
-        $notLike = new Conditions\NotLike($field, 'poney');
-        $greater = new Conditions\Greater($field, 'poney');
-        $greaterOrEqual = new Conditions\GreaterOrEqual($field, 'poney');
-        $lower = new Conditions\Lower($field, 'poney');
-        $lowerOrEqual = new Conditions\LowerOrEqual($field, 'poney');
-        $between = new Conditions\Between($field, 42, 666);
-        $isNull = new Conditions\IsNull($field);
-        $isNotNull = new Conditions\IsNotNull($field);
-        $in = new Conditions\In($field, array('poney', 'unicorn'));
-        $notIn = new Conditions\NotIn($field, array('poney', 'unicorn'));
+        $field = new TString('burger');
 
-        $conditionViaHelper = $field->equal('poney');
-        $this->assertEquals($equal->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
+        return [
+            'equal' => [
+                new Conditions\Equal($field, 'poney'),
+                $field->equal('poney'),
+            ],
+            'different' => [
+                new Conditions\Different($field, 'poney'),
+                $field->different('poney'),
+            ],
+            'like' => [
+                new Conditions\Like($field, 'poney'),
+                $field->like('poney'),
+            ],
+            'not like' => [
+                new Conditions\NotLike($field, 'poney'),
+                $field->notLike('poney'),
+            ],
+            'greater' => [
+                new Conditions\Greater($field, 'poney'),
+                $field->greaterThan('poney'),
+            ],
+            'greater or equal' => [
+                new Conditions\GreaterOrEqual($field, 'poney'),
+                $field->greaterOrEqualThan('poney'),
+            ],
+            'lower' => [
+                new Conditions\Lower($field, 'poney'),
+                $field->lowerThan('poney'),
+            ],
+            'lower or equal' => [
+                new Conditions\LowerOrEqual($field, 'poney'),
+                $field->lowerOrEqualThan('poney'),
+            ],
+            'between' => [
+                new Conditions\Between($field, 42, 666),
+                $field->between(42, 666),
+            ],
+            'is null' => [
+                new Conditions\IsNull($field),
+                $field->isNull(),
+            ],
+            'is not null' => [
+                new Conditions\IsNotNull($field),
+                $field->isNotNull(),
+            ],
+            'in' => [
+                new Conditions\In($field, array('poney', 'unicorn')),
+                $field->in(array('poney', 'unicorn')),
+            ],
+            'not in' => [
+                new Conditions\NotIn($field, array('poney', 'unicorn')),
+                $field->notIn(array('poney', 'unicorn')),
+            ],
+        ];
 
-        $conditionViaHelper = $field->different('poney');
-        $this->assertEquals($different->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->like('poney');
-        $this->assertEquals($like->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->notLike('poney');
-        $this->assertEquals($notLike->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->greaterThan('poney');
-        $this->assertEquals($greater->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->greaterOrEqualThan('poney');
-        $this->assertEquals($greaterOrEqual->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->lowerThan('poney');
-        $this->assertEquals($lower->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->lowerOrEqualThan('poney');
-        $this->assertEquals($lowerOrEqual->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->between(42, 666);
-        $this->assertEquals($between->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->isNull();
-        $this->assertEquals($isNull->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->isNotNull();
-        $this->assertEquals($isNotNull->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->in(array('poney', 'unicorn'));
-        $this->assertEquals($in->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
-
-        $conditionViaHelper = $field->notIn(array('poney', 'unicorn'));
-        $this->assertEquals($notIn->toString($this->escaper), $conditionViaHelper->toString($this->escaper));
     }
 }

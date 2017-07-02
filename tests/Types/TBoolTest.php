@@ -1,16 +1,19 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class BooleanTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use PHPUnit\Framework\TestCase;
+
+class TBoolTest extends TestCase
 {
     /**
      * @dataProvider providerTestFormatBoolean
      */
     public function testFormatBoolean($expected, $value)
     {
-        $type = new Types\Boolean('column_name');
+        $type = new TBool('column_name');
 
         $this->assertSame($expected, $type->format($value));
     }

@@ -1,38 +1,52 @@
 <?php
 
-namespace Muffin;
+declare(strict_types = 1);
+
+namespace Puzzle\QueryBuilder;
+
+use Puzzle\QueryBuilder\Queries\Delete;
+use Puzzle\QueryBuilder\Queries\Insert;
+use Puzzle\QueryBuilder\Queries\Select;
+use Puzzle\QueryBuilder\Queries\Update;
+use Puzzle\QueryBuilder\Queries\Snippets;
 
 class QueryBuilder
 {
     use Traits\EscaperAware;
 
-    public function delete($table = null, $alias = null)
+    public function delete(?string $table = null, ?string $alias = null): Delete
     {
-        return (new Queries\Delete($table, $alias))->setEscaper($this->escaper);
+        return (new Delete($table, $alias))->setEscaper($this->escaper);
     }
 
-    public function insert($table = null)
+    public function insert(?string $table = null): Insert
     {
-        return (new Queries\Insert($table))->setEscaper($this->escaper);
+        return (new Insert($table))->setEscaper($this->escaper);
     }
 
-    public function select($columns = null)
+    /**
+     * @param string|array $columns
+     */
+    public function select($columns = null): Select
     {
-        return (new Queries\Select($columns))->setEscaper($this->escaper);
+        return (new Select($columns))->setEscaper($this->escaper);
     }
 
-    public function update($table = null, $alias = null)
+    public function update(?string $table = null, ?string $alias = null): Update
     {
-        return (new Queries\Update($table, $alias))->setEscaper($this->escaper);
+        return (new Update($table, $alias))->setEscaper($this->escaper);
     }
 
-    public function count($columnName, $alias = null)
+    /**
+     * @param Snippet|string $columnName
+     */
+    public function count($columnName, ?string $alias = null): Snippets\Count
     {
-        return (new Queries\Snippets\Count($columnName, $alias));
+        return (new Snippets\Count($columnName, $alias));
     }
 
-    public function distinct($columnName)
+    public function distinct(string $columnName): Snippets\Distinct
     {
-        return (new Queries\Snippets\Distinct($columnName));
+        return (new Snippets\Distinct($columnName));
     }
 }

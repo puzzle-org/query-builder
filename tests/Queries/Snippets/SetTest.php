@@ -1,22 +1,25 @@
 <?php
 
-use Muffin\Queries\Snippets;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class SetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+
+class SetTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     public function testSet()
     {
-        $part = new Snippets\Set();
+        $part = new Set();
         $part->setEscaper($this->escaper);
 
         $part->set(array('name' => 'burger'));
@@ -39,7 +42,7 @@ class SetTest extends PHPUnit_Framework_TestCase
 
     public function testEmptySet()
     {
-        $part = new Snippets\Set();
+        $part = new Set();
         $part->setEscaper($this->escaper);
 
         $this->assertSame('', $part->toString());

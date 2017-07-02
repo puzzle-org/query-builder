@@ -1,15 +1,17 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class Update implements Snippet
 {
     private
         $tables;
 
-    public function __construct($table = null, $alias = null)
+    public function __construct($table = null, ?string $alias = null)
     {
         $this->tables = array();
 
@@ -19,7 +21,7 @@ class Update implements Snippet
         }
     }
 
-    public function addTable($table, $alias = null)
+    public function addTable($table, ?string $alias = null): self
     {
         if(! $table instanceof TableName)
         {
@@ -31,7 +33,7 @@ class Update implements Snippet
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->tables))
         {

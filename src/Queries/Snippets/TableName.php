@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class TableName implements Snippet
 {
@@ -10,7 +12,7 @@ class TableName implements Snippet
         $tableName,
         $alias;
 
-    public function __construct($tableName, $alias = null)
+    public function __construct(?string $tableName, ?string $alias = null)
     {
         if(empty($tableName))
         {
@@ -22,7 +24,7 @@ class TableName implements Snippet
         $this->alias = (string) $alias;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->alias))
         {

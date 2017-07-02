@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class DistinctTest extends \PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class DistinctTest extends TestCase
 {
     /**
      * @dataProvider providerTestDistinct
      */
     public function testDistinct($expected, $columnName)
     {
-        $qb = new Snippets\Distinct($columnName);
+        $qb = new Distinct($columnName);
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -27,7 +31,7 @@ class DistinctTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidDistinct($columnName)
     {
-        $qb = new Snippets\Distinct($columnName);
+        $qb = new Distinct($columnName);
     }
 
     public function providerTestInvalidDistinct()

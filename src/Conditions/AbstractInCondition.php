@@ -1,9 +1,11 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
-use Muffin\Type;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Type;
 
 abstract class AbstractInCondition extends AbstractCondition
 {
@@ -17,7 +19,7 @@ abstract class AbstractInCondition extends AbstractCondition
         $this->values = $values;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->isEmpty())
         {
@@ -34,18 +36,18 @@ abstract class AbstractInCondition extends AbstractCondition
         );
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $columnName = $this->type->getName();
 
         return empty($columnName);
     }
 
-    abstract protected function getOperator();
+    abstract protected function getOperator(): string;
 
-    protected function escapeValues(array $values, Escaper $escaper)
+    protected function escapeValues(array $values, Escaper $escaper): array
     {
-        $escapedValues = array();
+        $escapedValues = [];
 
         foreach($values as $value)
         {

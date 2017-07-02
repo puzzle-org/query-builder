@@ -1,18 +1,23 @@
 <?php
 
-use Muffin\Type;
-use Muffin\Types;
-use Muffin\Conditions;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class LikeTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Type;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TInt;
+
+class LikeTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -20,7 +25,7 @@ class LikeTest extends PHPUnit_Framework_TestCase
      */
     public function testLike($expected, Type $column, $value)
     {
-        $condition = new Conditions\Like($column, $value);
+        $condition = new Like($column, $value);
 
         $this->assertSame($expected, $condition->toString($this->escaper));
     }
@@ -28,18 +33,18 @@ class LikeTest extends PHPUnit_Framework_TestCase
     public function providerTestLike()
     {
         return array(
-            'simple string' => array("taste LIKE 'burger'", new Types\String('taste'), 'burger'),
-            'empty string'  => array("name LIKE ''", new Types\String('name'), ''),
+            'simple string' => array("taste LIKE 'burger'", new TString('taste'), 'burger'),
+            'empty string'  => array("name LIKE ''", new TString('name'), ''),
 
-            'simple string with starting wildcard' => array("name LIKE '%poney'", new Types\String('name'), '%poney'),
-            'simple string with ending wildcard' => array("name LIKE 'poney%'", new Types\String('name'), 'poney%'),
-            'simple string wrapped with wildcard' => array("name LIKE '%burger%'", new Types\String('name'), '%burger%'),
+            'simple string with starting wildcard' => array("name LIKE '%poney'", new TString('name'), '%poney'),
+            'simple string with ending wildcard' => array("name LIKE 'poney%'", new TString('name'), 'poney%'),
+            'simple string wrapped with wildcard' => array("name LIKE '%burger%'", new TString('name'), '%burger%'),
 
-            'simple int'    => array("id LIKE 1337", new Types\Integer('id'), 1337),
-            'empty int'     => array('id LIKE 0', new Types\Integer('id'), ''),
+            'simple int'    => array("id LIKE 1337", new TInt('id'), 1337),
+            'empty int'     => array('id LIKE 0', new TInt('id'), ''),
 
-            'empty column name' => array('', new Types\String(''), 'poney'),
-            'empty value' => array('', new Types\String(''), 'poney'),
+            'empty column name' => array('', new TString(''), 'poney'),
+            'empty value' => array('', new TString(''), 'poney'),
         );
     }
 }

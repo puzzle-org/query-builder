@@ -1,13 +1,15 @@
 <?php
 
-namespace Muffin\Queries;
+declare(strict_types = 1);
 
-use Muffin\Query;
-use Muffin\Condition;
-use Muffin\Traits\EscaperAware;
-use Muffin\Snippet;
-use Muffin\Queries\Snippets\Builders;
-use Muffin\Queries\Snippets\Having;
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Query;
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Queries\Snippets\Builders;
+use Puzzle\QueryBuilder\Queries\Snippets\Having;
 
 class Select implements Query
 {
@@ -24,7 +26,10 @@ class Select implements Query
         $from,
         $having;
 
-    public function __construct($columns = array())
+    /**
+     * @param array[string|Selectable] | string|Selectable  $columns
+     */
+    public function __construct($columns = [])
     {
         $this->select = new Snippets\Select();
         $this->where = new Snippets\Where();
@@ -32,10 +37,10 @@ class Select implements Query
         $this->having = new Snippets\Having();
         $this->orderBy = new Snippets\OrderBy();
 
-        $this->select->select($columns);
+        $this->select($columns);
     }
 
-    public function toString()
+    public function toString(): string
     {
         $queryParts = array(
             $this->buildSelect(),
@@ -51,33 +56,39 @@ class Select implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    public function from($table, $alias = null)
+    /**
+     * @param Snippets\TableName|string $table
+     */
+    public function from($table, ?string $alias = null): self
     {
         $this->from = new Snippets\From($table, $alias);
 
         return $this;
     }
 
-    public function select($columns)
+    /**
+     * @param array[string|Selectable] | string|Selectable  $columns
+     */
+    public function select($columns): self
     {
         $this->select->select($columns);
 
         return $this;
     }
 
-    public function having(Condition $condition)
+    public function having(Condition $condition): self
     {
         $this->having->having($condition);
 
         return $this;
     }
 
-    private function buildSelect()
+    private function buildSelect(): string
     {
         return $this->select->toString();
     }
 
-    private function buildFrom()
+    private function buildFrom(): string
     {
         if(!$this->from instanceof Snippet)
         {
@@ -87,7 +98,7 @@ class Select implements Query
         return $this->from->toString();
     }
 
-    private function buildHaving()
+    private function buildHaving(): string
     {
         $this->having->setEscaper($this->escaper);
 

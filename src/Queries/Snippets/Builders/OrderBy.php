@@ -1,22 +1,24 @@
 <?php
 
-namespace Muffin\Queries\Snippets\Builders;
+declare(strict_types = 1);
 
-use Muffin\Queries\Snippets;
+namespace Puzzle\QueryBuilder\Queries\Snippets\Builders;
+
+use Puzzle\QueryBuilder\Queries\Snippets;
 
 trait OrderBy
 {
     protected
         $orderBy;
 
-    public function orderBy($column, $directrion = Snippets\OrderBy::ASC)
+    public function orderBy(string $column, string $direction = Snippets\OrderBy::ASC): self
     {
-        $this->orderBy->addOrderBy($column, $directrion);
+        $this->orderBy->addOrderBy($column, $direction);
 
         return $this;
     }
 
-    private function buildOrderBy()
+    private function buildOrderBy(): string
     {
         return $this->orderBy->toString();
     }

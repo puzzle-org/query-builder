@@ -1,28 +1,37 @@
 <?php
 
-use Muffin\Queries;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
-use Muffin\Queries\Snippets\OrderBy;
+declare(strict_types = 1);
 
-class DeleteTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use Puzzle\QueryBuilder\Queries\Snippets\OrderBy;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+
+class DeleteTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
+    }
+
+    private function newDelete(?string $table = null, ?string $alias = null): Delete
+    {
+        return (new Delete($table, $alias))->setEscaper($this->escaper);
     }
 
     public function testDeleteSingleTable()
     {
-        $query = (new Queries\Delete())->setEscaper($this->escaper);
+        $query = $this->newDelete();
 
         $query
             ->from('burger', 'b')
-            ->where(new Conditions\Equal(new Types\String('type'), 'healthy'))
+            ->where(new Conditions\Equal(new TString('type'), 'healthy'))
         ;
 
         $this->assertSame("DELETE FROM burger AS b WHERE type = 'healthy'", $query->toString($this->escaper));
@@ -41,11 +50,11 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithInnerJoin()
     {
-        $query = (new Queries\Delete())->setEscaper($this->escaper);
+        $query = $this->newDelete();
 
         $query
             ->from('burger', 'b')
-            ->where(new Conditions\Equal(new Types\String('type'), 'healthy'))
+            ->where(new Conditions\Equal(new TString('type'), 'healthy'))
             ->innerJoin('taste', 't')->on('b.taste_id', 't.id')
         ;
 
@@ -54,11 +63,11 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithLeftJoin()
     {
-        $query = (new Queries\Delete())->setEscaper($this->escaper);
+        $query = $this->newDelete();
 
         $query
             ->from('burger', 'b')
-            ->where(new Conditions\Equal(new Types\String('type'), 'healthy'))
+            ->where(new Conditions\Equal(new TString('type'), 'healthy'))
             ->leftJoin('taste', 't')->on('b.taste_id', 't.id')
         ;
 
@@ -67,11 +76,11 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithRightJoin()
     {
-        $query = (new Queries\Delete())->setEscaper($this->escaper);
+        $query = $this->newDelete();
 
         $query
             ->from('burger', 'b')
-            ->where(new Conditions\Equal(new Types\String('type'), 'healthy'))
+            ->where(new Conditions\Equal(new TString('type'), 'healthy'))
             ->rightJoin('taste', 't')->on('b.taste_id', 't.id')
         ;
 
@@ -80,10 +89,10 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteUsingConstructor()
     {
-        $query = (new Queries\Delete('burger', 'b'))->setEscaper($this->escaper);
+        $query = $this->newDelete('burger', 'b');
 
         $query
-            ->where(new Conditions\Equal(new Types\String('type'), 'healthy'))
+            ->where(new Conditions\Equal(new TString('type'), 'healthy'))
         ;
 
         $this->assertSame("DELETE FROM burger AS b WHERE type = 'healthy'", $query->toString($this->escaper));
@@ -94,7 +103,7 @@ class DeleteTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteWithoutFrom()
     {
-        $query = (new Queries\Delete())->setEscaper($this->escaper);
+        $query = $this->newDelete();
 
         $query->toString();
     }

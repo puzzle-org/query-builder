@@ -1,6 +1,20 @@
-vendor
-.settings
+#================================================
+# Dependencies
+#================================================
+composer.phar
+vendor/
+composer.lock
+
+#================================================
+# Eclipse files
+#================================================
+.settings/
 .buildpath
 .project
-composer.lock
-composer.phar
+
+#================================================
+Generated files
+#================================================
+whalephant
+docker/images/phpunit/Dockerfile
+docker/images/phpunit/php.ini

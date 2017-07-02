@@ -1,19 +1,24 @@
 <?php
 
-use Muffin\Conditions\Sets\AndSet;
-use Muffin\Condition;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class AndSetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions\Sets;
+
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\Types\TString;
+
+class AndSetTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -33,9 +38,9 @@ class AndSetTest extends PHPUnit_Framework_TestCase
 
     public function providerTestToString()
     {
-        $equal42 = new Conditions\Equal(new Types\Integer('id'), 42);
-        $equal51 = new Conditions\Equal(new Types\Integer('id'), 51);
-        $burger = new Conditions\Equal(new Types\String('meal'), 'burger');
+        $equal42 = new Conditions\Equal(new TInt('id'), 42);
+        $equal51 = new Conditions\Equal(new TInt('id'), 51);
+        $burger = new Conditions\Equal(new TString('meal'), 'burger');
         $set = (new AndSet)->add($equal42)->add($equal51);
         $emptySet = new AndSet();
 
@@ -79,13 +84,13 @@ class AndSetTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'empty set' => array(null, true),
-            'simple condition' => array(new Conditions\Equal(new Types\Integer('id'), 51), false),
+            'simple condition' => array(new Conditions\Equal(new TInt('id'), 51), false),
             'composite of empty sets' => array(new Conditions\Binaries\AndCondition(new AndSet(), new AndSet()), true),
-            'composite with not empty condition' => array(new Conditions\Binaries\AndCondition(new AndSet(), new Conditions\Equal(new Types\Integer('id'), 51)), false),
+            'composite with not empty condition' => array(new Conditions\Binaries\AndCondition(new AndSet(), new Conditions\Equal(new TInt('id'), 51)), false),
             'set of empty set #1' => array(new AndSet(), true),
             'set of empty set #2' => array((new AndSet)->add(new AndSet()), true),
             'set of empty set #3' => array((new AndSet)->add(new AndSet())->add(new AndSet()), true),
-            'set of not empty set' => array((new AndSet())->add(new Conditions\Equal(new Types\Integer('id'), 51)), false),
+            'set of not empty set' => array((new AndSet())->add(new Conditions\Equal(new TInt('id'), 51)), false),
         );
     }
 }

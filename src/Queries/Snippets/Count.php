@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class Count implements Snippet, Selectable
 {
@@ -10,7 +12,10 @@ class Count implements Snippet, Selectable
         $columnName,
         $alias;
 
-    public function __construct($columnName, $alias = null)
+    /**
+     * @param Snippet|string $columnName
+     */
+    public function __construct($columnName, ?string $alias = null)
     {
         if((! $columnName instanceof Snippet) && empty($columnName))
         {
@@ -21,7 +26,7 @@ class Count implements Snippet, Selectable
         $this->alias = $alias;
     }
 
-    public function toString()
+    public function toString(): string
     {
         return implode(' ', array_filter(array(
             $this->buildCountSnippet(),
@@ -29,7 +34,7 @@ class Count implements Snippet, Selectable
         )));
     }
 
-    private function buildCountSnippet()
+    private function buildCountSnippet(): string
     {
         $columnName = $this->columnName;
 
@@ -41,7 +46,7 @@ class Count implements Snippet, Selectable
         return sprintf('COUNT(%s)', $columnName);
     }
 
-    private function buildAliasSnippet()
+    private function buildAliasSnippet(): string
     {
         $alias = $this->alias;
 
@@ -49,5 +54,7 @@ class Count implements Snippet, Selectable
         {
             return sprintf('AS %s', $alias);
         }
+
+        return '';
     }
 }

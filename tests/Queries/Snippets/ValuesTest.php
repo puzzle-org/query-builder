@@ -1,16 +1,20 @@
 <?php
 
-use Muffin\Queries\Snippets;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class ValuesTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+
+class ValuesTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -18,7 +22,7 @@ class ValuesTest extends PHPUnit_Framework_TestCase
      */
     public function testValues($expected, array $values)
     {
-        $part = new Snippets\Values($values);
+        $part = new Values($values);
 
         $part->setEscaper($this->escaper);
 
@@ -40,7 +44,7 @@ class ValuesTest extends PHPUnit_Framework_TestCase
 
     public function testValuesMultipleSet()
     {
-        $part = new Snippets\Values();
+        $part = new Values();
 
         $part
             ->values(array(
@@ -63,7 +67,7 @@ class ValuesTest extends PHPUnit_Framework_TestCase
      */
     public function testValuesMultipleSetDifferentColumns()
     {
-        $part = new Snippets\Values();
+        $part = new Values();
 
         $part
             ->values(array(
@@ -86,7 +90,7 @@ class ValuesTest extends PHPUnit_Framework_TestCase
      */
     public function testNoValues()
     {
-        $part = new Snippets\Values(array());
+        $part = new Values(array());
 
         $part->setEscaper($this->escaper);
 

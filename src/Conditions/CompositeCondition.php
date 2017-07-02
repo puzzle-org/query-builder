@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Condition;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Condition;
 
 interface CompositeCondition extends Condition
 {

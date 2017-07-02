@@ -1,87 +1,102 @@
 <?php
 
-namespace Muffin\Types;
+declare(strict_types = 1);
 
-use Muffin\Type;
-use Muffin\Conditions;
+namespace Puzzle\QueryBuilder\Types;
+
+use Puzzle\QueryBuilder\Type;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Conditions\Equal;
+use Puzzle\QueryBuilder\Conditions\Different;
+use Puzzle\QueryBuilder\Conditions\Like;
+use Puzzle\QueryBuilder\Conditions\NotLike;
+use Puzzle\QueryBuilder\Conditions\Greater;
+use Puzzle\QueryBuilder\Conditions\GreaterOrEqual;
+use Puzzle\QueryBuilder\Conditions\Lower;
+use Puzzle\QueryBuilder\Conditions\LowerOrEqual;
+use Puzzle\QueryBuilder\Conditions\Between;
+use Puzzle\QueryBuilder\Conditions\In;
+use Puzzle\QueryBuilder\Conditions\IsNull;
+use Puzzle\QueryBuilder\Conditions\IsNotNull;
+use Puzzle\QueryBuilder\Conditions\NotIn;
 
 abstract class AbstractType implements Type
 {
     private
         $name;
 
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = (string) $name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function equal($value)
+    public function equal($value): Conditions\Equal
     {
-        return new Conditions\Equal($this, $value);
+        return new Equal($this, $value);
     }
 
-    public function different($value)
+    public function different($value): Conditions\Different
     {
-        return new Conditions\Different($this, $value);
+        return new Different($this, $value);
     }
 
-    public function like($value)
+    public function like($value): Conditions\Like
     {
-        return new Conditions\Like($this, $value);
+        return new Like($this, $value);
     }
 
-    public function notLike($value)
+    public function notLike($value): Conditions\NotLike
     {
-        return new Conditions\NotLike($this, $value);
+        return new NotLike($this, $value);
     }
 
-    public function greaterThan($value)
+    public function greaterThan($value): Conditions\Greater
     {
-        return new Conditions\Greater($this, $value);
+        return new Greater($this, $value);
     }
 
-    public function greaterOrEqualThan($value)
+    public function greaterOrEqualThan($value): Conditions\GreaterOrEqual
     {
-        return new Conditions\GreaterOrEqual($this, $value);
+        return new GreaterOrEqual($this, $value);
     }
 
-    public function lowerThan($value)
+    public function lowerThan($value): Conditions\Lower
     {
-        return new Conditions\Lower($this, $value);
+        return new Lower($this, $value);
     }
 
-    public function lowerOrEqualThan($value)
+    public function lowerOrEqualThan($value): Conditions\LowerOrEqual
     {
-        return new Conditions\LowerOrEqual($this, $value);
+        return new LowerOrEqual($this, $value);
     }
 
-    public function between($start, $end)
+    public function between($start, $end): Conditions\Between
     {
-        return new Conditions\Between($this, $start, $end);
+        return new Between($this, $start, $end);
     }
 
-    public function in($value)
+    public function in(array $values): Conditions\In
     {
-        return new Conditions\In($this, $value);
+        return new In($this, $values);
     }
 
-    public function isNull()
+    public function isNull(): Conditions\IsNull
     {
-        return new Conditions\IsNull($this);
+        return new IsNull($this);
     }
 
-    public function isNotNull()
+    public function isNotNull(): Conditions\IsNotNull
     {
-        return new Conditions\IsNotNull($this);
+        return new IsNotNull($this);
     }
 
-    public function notIn($value)
+    public function notIn(array $values): Conditions\NotIn
     {
-        return new Conditions\NotIn($this, $value);
+        return new NotIn($this, $values);
     }
 }

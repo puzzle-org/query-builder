@@ -1,15 +1,17 @@
 <?php
 
-namespace Muffin\Traits;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
+namespace Puzzle\QueryBuilder\Traits;
+
+use Puzzle\QueryBuilder\Escaper;
 
 trait EscaperAware
 {
     protected
         $escaper;
 
-    public function setEscaper(Escaper $escaper)
+    public function setEscaper(Escaper $escaper): self
     {
         $this->escaper = $escaper;
 

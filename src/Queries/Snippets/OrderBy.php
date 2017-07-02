@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class OrderBy implements Snippet
 {
@@ -18,16 +20,17 @@ class OrderBy implements Snippet
         $this->orders = array();
     }
 
-    public function addOrderBy($column, $direction = self::ASC)
+    public function addOrderBy(string $column, string $direction = self::ASC): void
     {
         $this->validateDirection($direction);
 
-        $this->orders[$column] = (string) $direction;
+        $this->orders[$column] = $direction;
     }
 
-    public function toString()
+    public function toString(): string
     {
-        $orders = array();
+        $orders = [];
+
         foreach($this->orders as $column => $direction)
         {
             if(! empty($column))
@@ -44,9 +47,10 @@ class OrderBy implements Snippet
         return sprintf('ORDER BY %s', implode(', ', $orders));
     }
 
-    private function validateDirection($direction)
+    private function validateDirection(string $direction): void
     {
-        $availableDirections = array(self::ASC, self::DESC);
+        $availableDirections = [self::ASC, self::DESC];
+
         if(! in_array($direction, $availableDirections))
         {
             throw new \InvalidArgumentException(sprintf('Unsupported ORDER BY direction "%s"', $direction));

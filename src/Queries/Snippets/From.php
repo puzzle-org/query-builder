@@ -1,15 +1,20 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class From implements Snippet
 {
     private
         $tableName;
 
-    public function __construct($table, $alias = null)
+    /**
+     * @param TableName|string $table
+     */
+    public function __construct($table, ?string $alias = null)
     {
         if(! $table instanceof TableName)
         {
@@ -19,7 +24,7 @@ class From implements Snippet
         $this->tableName = $table;
     }
 
-    public function toString()
+    public function toString(): string
     {
         return sprintf('FROM %s', $this->tableName->toString());
     }

@@ -1,22 +1,26 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Condition;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Conditions\Binaries\AndCondition;
+use Puzzle\QueryBuilder\Conditions\Binaries\OrCondition;
 
 abstract class AbstractCondition implements Condition
 {
-    public function _and(Condition $condition)
+    public function _and(Condition $condition): AndCondition
     {
-        return new Binaries\AndCondition($this, $condition);
+        return new AndCondition($this, $condition);
     }
 
-    public function _or(Condition $condition)
+    public function _or(Condition $condition): OrCondition
     {
-        return new Binaries\OrCondition($this, $condition);
+        return new OrCondition($this, $condition);
     }
 
-    public function __call($methodName, $arguments)
+    public function __call(string $methodName, $arguments): Condition
     {
         $method = '_' . $methodName;
 

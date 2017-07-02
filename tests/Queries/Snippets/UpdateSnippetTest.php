@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class UpdateSnippetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class UpdateSnippetTest extends TestCase
 {
     /**
      * @dataProvider providerTestUpdate
      */
     public function testUpdate($expected, $tableName, $alias)
     {
-        $qb = new Snippets\Update($tableName, $alias);
+        $qb = new Update($tableName, $alias);
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -27,16 +31,16 @@ class UpdateSnippetTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateUsingTableNamePart()
     {
-        $tableName = new Snippets\TableName('ponyz', 'p');
+        $tableName = new TableName('ponyz', 'p');
 
-        $qb = new Snippets\Update($tableName);
+        $qb = new Update($tableName);
 
         $this->assertSame($qb->toString(), 'UPDATE ponyz AS p');
     }
 
     public function testUpdateAddTable()
     {
-        $qb = new Snippets\Update('ponyz', 'p');
+        $qb = new Update('ponyz', 'p');
 
         $qb
             ->addTable('burger', 'b')
@@ -52,7 +56,7 @@ class UpdateSnippetTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyTableNameUsingSetter($expected, $tableName)
     {
-        $qb = new Snippets\Update();
+        $qb = new Update();
 
         $qb->addTable($tableName);
 
@@ -64,7 +68,7 @@ class UpdateSnippetTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyTableNameUsingConstructor($expected, $tableName)
     {
-        $qb = new Snippets\Update($tableName);
+        $qb = new Update($tableName);
 
         $this->assertSame($expected, $qb->toString());
     }

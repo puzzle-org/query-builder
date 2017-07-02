@@ -1,20 +1,23 @@
 <?php
 
-use Muffin\Type;
-use Muffin\Types;
-use Muffin\Conditions;
-use Muffin\Tests\Escapers\SimpleEscaper;
-use Muffin\Queries;
-use Muffin\Conditions\Equal;
+declare(strict_types = 1);
 
-class StatementTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use Puzzle\QueryBuilder\Queries;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+
+class StatementTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -22,14 +25,14 @@ class StatementTest extends PHPUnit_Framework_TestCase
      */
     public function testStatement($expected, $statement)
     {
-        $condition = new Conditions\Statement($statement);
+        $condition = new Statement($statement);
 
         $this->assertSame($expected, $condition->toString($this->escaper));
     }
 
     public function providerTestStatement()
     {
-        $condition = new Conditions\Different(new Types\String('taste'), 'vegetable');
+        $condition = new Different(new TString('taste'), 'vegetable');
         $subQuery = (new Queries\Select('*'))->from('burger')->where($condition);
 
         return array(
@@ -42,9 +45,9 @@ class StatementTest extends PHPUnit_Framework_TestCase
 
     public function testCompositeStatement()
     {
-        $condition = new Conditions\Different(new Types\String('taste'), 'vegetable');
-        $statementCondition = new Conditions\Statement('Spread ponyz over the world');
-        $subQuery = new Conditions\Statement((new Queries\Select('*'))->from('burger')->where($condition));
+        $condition = new Different(new TString('taste'), 'vegetable');
+        $statementCondition = new Statement('Spread ponyz over the world');
+        $subQuery = new Statement((new Queries\Select('*'))->from('burger')->where($condition));
 
         $compositeCondition = $condition->and($statementCondition)->or($subQuery);
 
@@ -60,15 +63,15 @@ class StatementTest extends PHPUnit_Framework_TestCase
      */
     public function testIsEmpty($expected, $statement)
     {
-        $condition = new Conditions\Statement($statement);
+        $condition = new Statement($statement);
 
         $this->assertSame($expected, $condition->isEmpty());
     }
 
     public function providerTestIsEmpty()
     {
-        $condition = new Conditions\Different(new Types\String('taste'), 'vegetable');
-        $subQuery = new Conditions\Statement((new Queries\Select('*'))->from('burger')->where($condition));
+        $condition = new Different(new TString('taste'), 'vegetable');
+        $subQuery = new Statement((new Queries\Select('*'))->from('burger')->where($condition));
 
         return array(
             'string' => array(false, 'ponyz over burgerz'),

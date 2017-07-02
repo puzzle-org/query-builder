@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class DeleteSnippetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class DeleteSnippetTest extends TestCase
 {
     /**
      * @dataProvider providerTestDeleteViaConstructor
      */
     public function testDeleteViaConstructor($expected, $columns)
     {
-        $select = new Snippets\Delete($columns);
+        $select = new Delete($columns);
 
         $this->assertSame($expected, $select->toString());
     }

@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class OffsetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class OffsetTest extends TestCase
 {
     /**
      * @dataProvider providerTestOffset
      */
     public function testOffset($expected, $limit)
     {
-        $qb = new Snippets\Offset($limit);
+        $qb = new Offset($limit);
 
         $this->assertSame($expected, $qb->toString());
     }

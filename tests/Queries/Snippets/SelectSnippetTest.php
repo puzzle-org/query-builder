@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class SelectSnippetTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class SelectSnippetTest extends TestCase
 {
     /**
      * @dataProvider providerTestSelectViaConstructor
      */
     public function testSelectViaConstructor($expected, $columns)
     {
-        $select = new Snippets\Select($columns);
+        $select = new Select($columns);
 
         $this->assertSame($expected, $select->toString());
     }
@@ -19,7 +23,7 @@ class SelectSnippetTest extends PHPUnit_Framework_TestCase
      */
     public function testSelectViaSetter($expected, $columns)
     {
-        $select = new Snippets\Select();
+        $select = new Select();
         $select->select($columns);
 
         $this->assertSame($expected, $select->toString());
@@ -37,7 +41,7 @@ class SelectSnippetTest extends PHPUnit_Framework_TestCase
 
     public function testAddColumnsOnTheFly()
     {
-        $select = new Snippets\Select('id');
+        $select = new Select('id');
         $select
             ->select('name')
             ->select(array('color', 'taste'));
@@ -50,7 +54,7 @@ class SelectSnippetTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidColumnName()
     {
-        $select = new Snippets\Select(array('poney', new stdClass()));
+        $select = new Select(array('poney', new \stdClass()));
 
         $select->toString();
     }

@@ -1,13 +1,15 @@
 <?php
 
-namespace Muffin\Types;
+declare(strict_types = 1);
 
-class Datetime extends AbstractType
+namespace Puzzle\QueryBuilder\Types;
+
+class TDatetime extends AbstractType
 {
     const
         MYSQL_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function isEscapeRequired()
+    public function isEscapeRequired(): bool
     {
         return true;
     }

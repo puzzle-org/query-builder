@@ -1,100 +1,104 @@
 <?php
 
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class NullConditionTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TInt;
+
+class NullConditionTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     public function testBareNullCondition()
     {
-        $condition = new Conditions\NullCondition();
+        $condition = new NullCondition();
 
         $this->assertSame('', $condition->toString($this->escaper));
     }
 
     public function testNullConditionAndNullCondition()
     {
-        $condition = (new Conditions\NullCondition())->and(new Conditions\NullCondition());
+        $condition = (new NullCondition())->and(new NullCondition());
 
         $this->assertSame('', $condition->toString($this->escaper));
     }
 
     public function testNullConditionAndCondition()
     {
-        $condition = (new Conditions\NullCondition())->and(new Conditions\Different(new Types\Integer('poney'), 666));
+        $condition = (new NullCondition())->and(new Different(new TInt('poney'), 666));
 
         $this->assertSame('poney != 666', $condition->toString($this->escaper));
 
-        $condition = (new Conditions\Different(new Types\Integer('poney'), 666))->and(new Conditions\NullCondition());
+        $condition = (new Different(new TInt('poney'), 666))->and(new NullCondition());
 
         $this->assertSame('poney != 666', $condition->toString($this->escaper));
     }
 
     public function testNullConditionOrCondition()
     {
-        $condition = (new Conditions\NullCondition())->or(new Conditions\Different(new Types\Integer('poney'), 666));
+        $condition = (new NullCondition())->or(new Different(new TInt('poney'), 666));
 
         $this->assertSame('poney != 666', $condition->toString($this->escaper));
 
-        $condition = (new Conditions\Different(new Types\Integer('poney'), 666))->or(new Conditions\NullCondition());
+        $condition = (new Different(new TInt('poney'), 666))->or(new NullCondition());
 
         $this->assertSame('poney != 666', $condition->toString($this->escaper));
     }
 
     public function testNullConditionAndComposite()
     {
-        $composite = (new Conditions\Different(new Types\Integer('poney'), 666))
+        $composite = (new Different(new TInt('poney'), 666))
                         ->and(
-                            (new Conditions\Equal(new Types\Integer('response'), 42))
-                                ->or(new Conditions\Greater(new Types\Integer('score'), 1337))
+                            (new Equal(new TInt('response'), 42))
+                                ->or(new Greater(new TInt('score'), 1337))
                         );
 
-        $condition = (new Conditions\NullCondition())->and($composite);
+        $condition = (new NullCondition())->and($composite);
 
         $this->assertSame('poney != 666 AND (response = 42 OR score > 1337)', $condition->toString($this->escaper));
 
-        $condition = $composite->and(new Conditions\NullCondition());
+        $condition = $composite->and(new NullCondition());
 
         $this->assertSame('poney != 666 AND (response = 42 OR score > 1337)', $condition->toString($this->escaper));
     }
 
     public function testNullConditionOrComposite()
     {
-        $composite = (new Conditions\Different(new Types\Integer('poney'), 666))
+        $composite = (new Different(new TInt('poney'), 666))
                         ->and(
-                            (new Conditions\Equal(new Types\Integer('response'), 42))
-                                ->or(new Conditions\Greater(new Types\Integer('score'), 1337))
+                            (new Equal(new TInt('response'), 42))
+                                ->or(new Greater(new TInt('score'), 1337))
                         );
 
-        $condition = (new Conditions\NullCondition())->or($composite);
+        $condition = (new NullCondition())->or($composite);
 
         $this->assertSame('poney != 666 AND (response = 42 OR score > 1337)', $condition->toString($this->escaper));
 
-        $condition = $composite->or(new Conditions\NullCondition());
+        $condition = $composite->or(new NullCondition());
 
         $this->assertSame('poney != 666 AND (response = 42 OR score > 1337)', $condition->toString($this->escaper));
     }
 
     public function testConditionIsEmpty()
     {
-        $condition = new Conditions\NullCondition();
+        $condition = new NullCondition();
 
         $this->assertTrue($condition->isEmpty());
 
-        $condition = (new Conditions\NullCondition())->and(new Conditions\Equal(new Types\Integer('response'), 42));
+        $condition = (new NullCondition())->and(new Equal(new TInt('response'), 42));
 
         $this->assertFalse($condition->isEmpty());
 
-        $condition = (new Conditions\Equal(new Types\Integer('response'), 42))->and(new Conditions\NullCondition());
+        $condition = (new Equal(new TInt('response'), 42))->and(new NullCondition());
 
         $this->assertFalse($condition->isEmpty());
     }

@@ -1,13 +1,14 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
-use Muffin\Type;
-use Muffin\Types;
-use Muffin\Conditions;
-use Muffin\Traits\EscaperAware;
-use Muffin\Traits\TypeGuesser;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Type;
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Traits\TypeGuesser;
 
 class Set implements Snippet
 {
@@ -20,17 +21,17 @@ class Set implements Snippet
 
     public function __construct()
     {
-        $this->sets = array();
+        $this->sets = [];
     }
 
-    public function set(array $fields)
+    public function set(array $fields): self
     {
         $this->sets = array_merge($this->sets, $fields);
 
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->sets))
         {

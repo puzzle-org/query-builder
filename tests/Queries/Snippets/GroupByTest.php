@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class GroupByTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class GroupByTest extends TestCase
 {
     /**
      * @dataProvider providerTestGroupBy
      */
     public function testGroupBy($expected, array $groupBy)
     {
-        $qb = new Snippets\GroupBy();
+        $qb = new GroupBy();
 
         foreach($groupBy as $column)
         {

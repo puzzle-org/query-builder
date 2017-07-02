@@ -1,10 +1,12 @@
 <?php
 
-namespace Muffin\Queries\Snippets\Joins;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
-use Muffin\Queries\Snippets\Join;
-use Muffin\Queries\Snippets;
+namespace Puzzle\QueryBuilder\Queries\Snippets\Joins;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Queries\Snippets\Join;
+use Puzzle\QueryBuilder\Queries\Snippets;
 
 abstract class AbstractJoin implements Join, Snippet
 {
@@ -13,22 +15,25 @@ abstract class AbstractJoin implements Join, Snippet
         $using,
         $on;
 
-    public function __construct($table, $alias = null)
+    public function __construct(string $table, ?string $alias = null)
     {
         $this->table = new Snippets\TableName($table, $alias);
-        $this->on = array();
+        $this->on = [];
     }
 
-    public function using($column)
+    /**
+     * @param array[string]|string $column
+     */
+    public function using($column): self
     {
-        $this->on = array();
+        $this->on = [];
 
         $this->using = new Snippets\Using($column);
 
         return $this;
     }
 
-    public function on($leftColumn, $rightColumn)
+    public function on(?string $leftColumn, ?string $rightColumn): self
     {
         $this->using = null;
         $this->on[] = new Snippets\On($leftColumn, $rightColumn);
@@ -36,7 +41,7 @@ abstract class AbstractJoin implements Join, Snippet
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         $joinQueryPart = sprintf(
             '%s %s',
@@ -50,9 +55,9 @@ abstract class AbstractJoin implements Join, Snippet
         return $joinQueryPart;
     }
 
-    abstract protected function getJoinDeclaration();
+    abstract protected function getJoinDeclaration(): string;
 
-    private function buildUsingConditionClause()
+    private function buildUsingConditionClause(): string
     {
         if(!$this->using instanceof Snippet)
         {
@@ -62,7 +67,7 @@ abstract class AbstractJoin implements Join, Snippet
         return ' ' . $this->using->toString();
     }
 
-    private function buildOnConditionClause()
+    private function buildOnConditionClause(): string
     {
         $conditionClause = array();
 

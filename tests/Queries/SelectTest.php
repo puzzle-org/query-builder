@@ -1,28 +1,38 @@
 <?php
 
-use Muffin\Queries;
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class SelectTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TInt;
+
+class SelectTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
+    }
+
+    private function newSelect(): Select
+    {
+        return (new Select())->setEscaper($this->escaper);
     }
 
     public function testSelect()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select(array('id', 'name'))
             ->from('poney')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id, name FROM poney WHERE name = 'burger'", $query->toString($this->escaper));
@@ -30,7 +40,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectAlias()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select(array('id', 'name'))
@@ -42,13 +52,13 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectMultipleWhere()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select(array('id', 'name'))
             ->from('poney')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
-            ->where(new Conditions\Equal(new Types\Integer('rank'), 42))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
+            ->where(new Conditions\Equal(new TInt('rank'), 42))
         ;
 
         $this->assertSame("SELECT id, name FROM poney WHERE name = 'burger' AND rank = 42", $query->toString($this->escaper));
@@ -56,7 +66,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectMultipleSelect()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select(array('id', 'name'))
@@ -64,7 +74,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->select(array('taste', 'price'))
             ->select('rank')
             ->from('poney')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id, name, rank, taste, price FROM poney WHERE name = 'burger'", $query->toString($this->escaper));
@@ -75,7 +85,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testSelectWithoutSelectOrFrom()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query->toString();
     }
@@ -85,7 +95,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testSelectWithoutFrom()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper)
+        $query = (new Select())->setEscaper($this->escaper)
             ->select('burger');
 
         $query->toString();
@@ -96,7 +106,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testSelectWithoutSelectingColumns()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
         $query->from('poney');
 
         $query->toString();
@@ -107,7 +117,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testJoinWrongSynthax()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
@@ -120,13 +130,13 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSingleRightJoin()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
             ->rightJoin('taste', 't')->on('p.taste_id', 't.id')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p RIGHT JOIN taste AS t ON p.taste_id = t.id WHERE name = 'burger'", $query->toString($this->escaper));
@@ -134,13 +144,13 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSingleLeftJoin()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
             ->leftJoin('taste', 't')->on('p.taste_id', 't.id')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p LEFT JOIN taste AS t ON p.taste_id = t.id WHERE name = 'burger'", $query->toString($this->escaper));
@@ -148,13 +158,13 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSingleInnerJoin()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
             ->innerJoin('taste', 't')->on('p.taste_id', 't.id')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p INNER JOIN taste AS t ON p.taste_id = t.id WHERE name = 'burger'", $query->toString($this->escaper));
@@ -162,7 +172,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testMultipleInnerJoin()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
@@ -170,7 +180,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->innerJoin('taste', 't')->on('p.taste_id', 't.id')
             ->innerJoin('country', 'c')->on('c.country_id', 'c.id')
             ->innerJoin('unicorn')->using('code')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p INNER JOIN taste AS t ON p.taste_id = t.id INNER JOIN country AS c ON c.country_id = c.id INNER JOIN unicorn USING (code) WHERE name = 'burger'", $query->toString($this->escaper));
@@ -178,7 +188,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testMultipleMixedJoin()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
@@ -186,7 +196,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->innerJoin('taste', 't')->on('p.taste_id', 't.id')
             ->rightJoin('country', 'c')->on('c.country_id', 'c.id')
             ->leftJoin('unicorn')->using('code')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p INNER JOIN taste AS t ON p.taste_id = t.id RIGHT JOIN country AS c ON c.country_id = c.id LEFT JOIN unicorn USING (code) WHERE name = 'burger'", $query->toString($this->escaper));
@@ -194,12 +204,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testLimit()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->limit(42)
         ;
 
@@ -208,12 +218,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testGroupBy()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->groupBy('taste_id')
             ->groupBy('color')
             ->limit(42)
@@ -226,12 +236,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testOrderBy()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->limit(42)
             ->offset(1337)
             ->orderBy('poney')
@@ -242,12 +252,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testLimitWithOffset()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->limit(42)
             ->offset(1337)
         ;
@@ -260,12 +270,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
      */
     public function testOffsetWithoutLimit()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->offset(666)
         ;
 
@@ -274,12 +284,12 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testOffsetWithEmptyLimit()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
             ->limit('')
             ->offset(666)
         ;
@@ -289,18 +299,18 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testHaving()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
 
         $query
             ->select('id')
             ->from('poney', 'p')
-            ->having(new Conditions\Greater(new Types\Integer('rank'), 42))
+            ->having(new Conditions\Greater(new TInt('rank'), 42))
         ;
 
         $this->assertSame("SELECT id FROM poney AS p HAVING rank > 42", $query->toString($this->escaper));
 
         $query->having(
-            (new Conditions\Equal(new Types\Integer('author_id'), 12))->or(new Conditions\Equal(new Types\Integer('author_id'), 666))
+            (new Conditions\Equal(new TInt('author_id'), 12))->or(new Conditions\Equal(new TInt('author_id'), 666))
         );
 
         $this->assertSame("SELECT id FROM poney AS p HAVING (rank > 42) AND (author_id = 12 OR author_id = 666)", $query->toString($this->escaper));
@@ -308,15 +318,15 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectCount()
     {
-        $query = (new Queries\Select())->setEscaper($this->escaper);
+        $query = $this->newSelect();
         $query
             ->select(array(
-                new Queries\Snippets\Count(new Queries\Snippets\Distinct('votes')),
+                new Snippets\Count(new Snippets\Distinct('votes')),
                 'id',
                 'name'
             ))
             ->from('poney')
-            ->where(new Conditions\Equal(new Types\String('name'), 'burger'))
+            ->where(new Conditions\Equal(new TString('name'), 'burger'))
         ;
 
         $this->assertSame("SELECT COUNT(DISTINCT votes), id, name FROM poney WHERE name = 'burger'", $query->toString($this->escaper));

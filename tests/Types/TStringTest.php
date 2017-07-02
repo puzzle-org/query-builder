@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Types;
+declare(strict_types = 1);
 
-class StringTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use PHPUnit\Framework\TestCase;
+
+class TStringTest extends TestCase
 {
     /**
      * @dataProvider providerTestFormatString
      */
     public function testFormatString($expected, $value)
     {
-        $type = new Types\String('column_name');
+        $type = new TString('column_name');
 
         $this->assertSame($expected, $type->format($value));
     }

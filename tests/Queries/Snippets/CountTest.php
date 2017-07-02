@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class CountTest extends \PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class CountTest extends TestCase
 {
     /**
      * @dataProvider providerTestCount
      */
     public function testCount($expected, $columnName, $alias)
     {
-        $qb = new Snippets\Count($columnName, $alias);
+        $qb = new Count($columnName, $alias);
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -21,9 +25,9 @@ class CountTest extends \PHPUnit_Framework_TestCase
             array('COUNT(*) AS burger', '*', 'burger'),
             array('COUNT(unicorn) AS burger', 'unicorn', 'burger'),
             array('COUNT(z.unicorn) AS burger', 'z.unicorn', 'burger'),
-            array('COUNT(DISTINCT unicorn)', new Snippets\Distinct('unicorn'), null),
-            array('COUNT(DISTINCT unicorn) AS burger', new Snippets\Distinct('unicorn'), 'burger'),
-            array('COUNT(DISTINCT z.unicorn) AS burger', new Snippets\Distinct('z.unicorn'), 'burger'),
+            array('COUNT(DISTINCT unicorn)', new Distinct('unicorn'), null),
+            array('COUNT(DISTINCT unicorn) AS burger', new Distinct('unicorn'), 'burger'),
+            array('COUNT(DISTINCT z.unicorn) AS burger', new Distinct('z.unicorn'), 'burger'),
         );
     }
 
@@ -33,7 +37,7 @@ class CountTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidCount($columnName)
     {
-        $qb = new Snippets\Count($columnName);
+        $qb = new Count($columnName);
     }
 
     public function providerTestInvalidCount()

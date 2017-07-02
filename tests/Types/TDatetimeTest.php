@@ -1,16 +1,19 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class DatetimeTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use PHPUnit\Framework\TestCase;
+
+class TDatetimeTest extends TestCase
 {
     /**
      * @dataProvider providerTestFormatDatetime
      */
     public function testFormatDatetime($expected, $value)
     {
-        $type = new Types\Datetime('column_name');
+        $type = new TDatetime('column_name');
 
         $this->assertSame($expected, $type->format($value));
     }

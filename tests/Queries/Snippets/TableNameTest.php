@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class TableNameTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class TableNameTest extends TestCase
 {
     /**
      * @dataProvider providerTestTableName
      */
     public function testTableName($expected, $tableName, $alias)
     {
-        $qb = new Snippets\TableName($tableName, $alias);
+        $qb = new TableName($tableName, $alias);
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -30,7 +34,7 @@ class TableNameTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyTableName($tableName)
     {
-        $qb = new Snippets\TableName($tableName);
+        $qb = new TableName($tableName);
 
         $qb->toString($tableName);
     }

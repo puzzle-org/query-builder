@@ -1,17 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
-use Muffin\Conditions;
-use Muffin\Types;
+declare(strict_types = 1);
 
-class JoinsTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class JoinsTest extends TestCase
 {
     /**
      * @dataProvider providerTestRightJoinUsing
      */
     public function testRightJoinUsing($expected, $tableName, $alias, $using)
     {
-        $qb = new Snippets\Joins\RightJoin($tableName, $alias);
+        $qb = new Joins\RightJoin($tableName, $alias);
         $qb->using($using);
 
         $this->assertSame($expected, $qb->toString());
@@ -30,7 +32,7 @@ class JoinsTest extends PHPUnit_Framework_TestCase
      */
     public function testLeftJoinUsing($expected, $tableName, $alias, $using)
     {
-        $qb = new Snippets\Joins\LeftJoin($tableName, $alias);
+        $qb = new Joins\LeftJoin($tableName, $alias);
         $qb->using($using);
 
         $this->assertSame($expected, $qb->toString());
@@ -49,7 +51,7 @@ class JoinsTest extends PHPUnit_Framework_TestCase
      */
     public function testInnerJoinUsing($expected, $tableName, $alias, $using)
     {
-        $qb = new Snippets\Joins\InnerJoin($tableName, $alias);
+        $qb = new Joins\InnerJoin($tableName, $alias);
         $qb->using($using);
 
         $this->assertSame($expected, $qb->toString());
@@ -65,11 +67,11 @@ class JoinsTest extends PHPUnit_Framework_TestCase
 
     public function testJoinWithoutCondition()
     {
-        $qb = new Snippets\Joins\LeftJoin('poney', 'p');
+        $qb = new Joins\LeftJoin('poney', 'p');
 
         $this->assertSame('LEFT JOIN poney AS p', $qb->toString());
 
-        $qb = new Snippets\Joins\InnerJoin('poney', 'p');
+        $qb = new Joins\InnerJoin('poney', 'p');
 
         $this->assertSame('INNER JOIN poney AS p', $qb->toString());
     }
@@ -79,7 +81,7 @@ class JoinsTest extends PHPUnit_Framework_TestCase
      */
     public function testRightJoinOn($expected, $tableName, $alias, $leftColumn, $rightColumn)
     {
-        $qb = new Snippets\Joins\RightJoin($tableName, $alias);
+        $qb = new Joins\RightJoin($tableName, $alias);
         $qb->on($leftColumn, $rightColumn);
 
         $this->assertSame($expected, $qb->toString());
@@ -98,7 +100,7 @@ class JoinsTest extends PHPUnit_Framework_TestCase
      */
     public function testLeftJoinOn($expected, $tableName, $alias, $leftColumn, $rightColumn)
     {
-        $qb = new Snippets\Joins\LeftJoin($tableName, $alias);
+        $qb = new Joins\LeftJoin($tableName, $alias);
         $qb->on($leftColumn, $rightColumn);
 
         $this->assertSame($expected, $qb->toString());
@@ -117,7 +119,7 @@ class JoinsTest extends PHPUnit_Framework_TestCase
      */
     public function testInnerJoinOn($expected, $tableName, $alias, $leftColumn, $rightColumn)
     {
-        $qb = new Snippets\Joins\InnerJoin($tableName, $alias);
+        $qb = new Joins\InnerJoin($tableName, $alias);
         $qb->on($leftColumn, $rightColumn);
 
         $this->assertSame($expected, $qb->toString());
@@ -133,13 +135,13 @@ class JoinsTest extends PHPUnit_Framework_TestCase
 
     public function testJoinConditionOverriding()
     {
-        $qb = new Snippets\Joins\InnerJoin('poney','p');
+        $qb = new Joins\InnerJoin('poney','p');
         $qb->on('p.taste', 'b.urger');
         $qb->using('id');
 
         $this->assertSame('INNER JOIN poney AS p USING (id)', $qb->toString());
 
-        $qb = new Snippets\Joins\InnerJoin('poney','p');
+        $qb = new Joins\InnerJoin('poney','p');
         $qb->on('p.taste', 'b.urger');
         $qb->using('id')->on('p.unicorn', 'r.rainbow');
 

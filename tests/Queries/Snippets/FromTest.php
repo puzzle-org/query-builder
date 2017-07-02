@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class FromTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class FromTest extends TestCase
 {
     /**
      * @dataProvider providerTestFrom
      */
     public function testFrom($expected, $tableName, $alias)
     {
-        $qb = new Snippets\From($tableName, $alias);
+        $qb = new From($tableName, $alias);
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -27,9 +31,9 @@ class FromTest extends PHPUnit_Framework_TestCase
 
     public function testFromUsingTableNamePart()
     {
-        $tableName = new Snippets\TableName('unicorns', 'u');
+        $tableName = new TableName('unicorns', 'u');
 
-        $qb = new Snippets\From($tableName);
+        $qb = new From($tableName);
 
         $this->assertSame($qb->toString(), 'FROM unicorns AS u');
     }
@@ -40,7 +44,7 @@ class FromTest extends PHPUnit_Framework_TestCase
      */
     public function testEmptyTableName($tableName)
     {
-        $qb = new Snippets\From($tableName);
+        $qb = new From($tableName);
 
         $qb->toString($tableName);
     }

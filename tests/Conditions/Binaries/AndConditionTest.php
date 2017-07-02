@@ -1,17 +1,23 @@
 <?php
 
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class AndConditionTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions\Binaries;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TInt;
+
+class AndConditionTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     /**
@@ -19,7 +25,7 @@ class AndConditionTest extends PHPUnit_Framework_TestCase
      */
     public function testAndCondition($expected, $isEmpty, $conditionA, $conditionB)
     {
-        $condition = new Conditions\Binaries\AndCondition($conditionA, $conditionB);
+        $condition = new AndCondition($conditionA, $conditionB);
 
         $this->assertSame($expected, $condition->toString($this->escaper));
         $this->assertSame($isEmpty, $condition->isEmpty());
@@ -28,16 +34,16 @@ class AndConditionTest extends PHPUnit_Framework_TestCase
     public function providerTestAndCondition()
     {
         $emptyCondition = new Conditions\NullCondition();
-        $conditionA = new Conditions\Equal(new Types\String('name'), 'rainbow');
-        $conditionB = new Conditions\Equal(new Types\String('taste'), 'burger');
-        $conditionC = new Conditions\Equal(new Types\Integer('rank'), '42');
-        $conditionD = new Conditions\Equal(new Types\String('author'), 'julian');
+        $conditionA = new Conditions\Equal(new TString('name'), 'rainbow');
+        $conditionB = new Conditions\Equal(new TString('taste'), 'burger');
+        $conditionC = new Conditions\Equal(new TInt('rank'), '42');
+        $conditionD = new Conditions\Equal(new TString('author'), 'julian');
 
-        $orComposite1  = new Conditions\Binaries\OrCondition($conditionA, $conditionB);
-        $orComposite2  = new Conditions\Binaries\OrCondition($conditionC, $conditionD);
+        $orComposite1  = new OrCondition($conditionA, $conditionB);
+        $orComposite2  = new OrCondition($conditionC, $conditionD);
 
-        $andComposite1 = new Conditions\Binaries\AndCondition($conditionA, $conditionB);
-        $andComposite2 = new Conditions\Binaries\AndCondition($conditionC, $conditionD);
+        $andComposite1 = new AndCondition($conditionA, $conditionB);
+        $andComposite2 = new AndCondition($conditionC, $conditionD);
 
         return array(
             'simple + simple' => array("name = 'rainbow' AND taste = 'burger'", false, $conditionA, $conditionB),

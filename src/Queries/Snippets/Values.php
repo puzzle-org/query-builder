@@ -1,13 +1,13 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
-use Muffin\Type;
-use Muffin\Types;
-use Muffin\Traits\EscaperAware;
-use Muffin\Types\String;
-use Muffin\Traits\TypeGuesser;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Type;
+use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\Traits\TypeGuesser;
 
 class Values implements Snippet
 {
@@ -18,9 +18,9 @@ class Values implements Snippet
     private
         $values;
 
-    public function __construct($values = null)
+    public function __construct(array $values = null)
     {
-        $this->values = array();
+        $this->values = [];
 
         if(! empty($values))
         {
@@ -28,14 +28,14 @@ class Values implements Snippet
         }
     }
 
-    public function values(array $values)
+    public function values(array $values): self
     {
         $this->values[] = $values;
 
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->values))
         {
@@ -44,7 +44,8 @@ class Values implements Snippet
 
         $columnsNameList = array_filter(array_keys(reset($this->values)));
 
-        $values = array();
+        $values = [];
+
         foreach($this->values as $valuesSet)
         {
             if($columnsNameList !== array_keys($valuesSet))
@@ -57,14 +58,15 @@ class Values implements Snippet
 
         return sprintf(
             '%s VALUES %s',
-            $this->wrapWithParentheses(implode(', ', $columnsNameList)),
+            $this->wrapWithParenthesis(implode(', ', $columnsNameList)),
             implode(', ', $values)
         );
     }
 
-    private function buildValuesSetString(array $values)
+    private function buildValuesSetString(array $values): string
     {
-        $valuesSet = array();
+        $valuesSet = [];
+
         foreach($values as $columnName => $value)
         {
             if(! empty($columnName))
@@ -75,7 +77,7 @@ class Values implements Snippet
             }
         }
 
-        return $this->wrapWithParentheses(implode(', ', $valuesSet));
+        return $this->wrapWithParenthesis(implode(', ', $valuesSet));
     }
 
     private function formatValue(Type $type, $value)
@@ -100,7 +102,7 @@ class Values implements Snippet
         return $value;
     }
 
-    private function wrapWithParentheses($value)
+    private function wrapWithParenthesis(string $value): string
     {
         return sprintf('(%s)', $value);
     }

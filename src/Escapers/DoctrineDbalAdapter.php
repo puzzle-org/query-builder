@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Escapers;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
+namespace Puzzle\QueryBuilder\Escapers;
+
+use Puzzle\QueryBuilder\Escaper;
 use Doctrine\DBAL\Driver\Connection;
 
 class DoctrineDbalAdapter implements Escaper

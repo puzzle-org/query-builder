@@ -1,25 +1,31 @@
 <?php
 
-use Muffin\Conditions;
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class HelperTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Conditions\Binaries;
+
+use Puzzle\QueryBuilder\Conditions;
+use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
+use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Types\TInt;
+
+class HelperTest extends TestCase
 {
     protected
         $escaper;
 
     protected function setUp()
     {
-        $this->escaper = new SimpleEscaper();
+        $this->escaper = new AlwaysQuoteEscaper();
     }
 
     public function testMixedHelper()
     {
-        $condition = (new Conditions\Equal(new Types\String('name'), 'rainbow'))
+        $condition = (new Conditions\Equal(new TString('name'), 'rainbow'))
             ->or(
-                (new Conditions\Equal(new Types\String('taste'), 'burger'))
-                ->and(new Conditions\Equal(new Types\Integer('rank'), 42))
+                (new Conditions\Equal(new TString('taste'), 'burger'))
+                ->and(new Conditions\Equal(new TInt('rank'), 42))
             );
 
         $this->assertSame($condition->toString($this->escaper), "name = 'rainbow' OR (taste = 'burger' AND rank = 42)");
@@ -30,7 +36,7 @@ class HelperTest extends PHPUnit_Framework_TestCase
      */
     public function testNoParameterGiven()
     {
-        $condition = new Conditions\Equal(new Types\String('taste'), 'burger');
+        $condition = new Conditions\Equal(new TString('taste'), 'burger');
         $condition->or();
     }
 
@@ -39,8 +45,8 @@ class HelperTest extends PHPUnit_Framework_TestCase
      */
     public function testTypoInOrHelperName()
     {
-        $condition = new Conditions\Equal(new Types\String('taste'), 'burger');
-        $condition->ro(new Conditions\Equal(new Types\String('taste'), 'vegetable'));
+        $condition = new Conditions\Equal(new TString('taste'), 'burger');
+        $condition->ro(new Conditions\Equal(new TString('taste'), 'vegetable'));
     }
 
     /**
@@ -48,7 +54,7 @@ class HelperTest extends PHPUnit_Framework_TestCase
      */
     public function testTypoInAndHelperName()
     {
-        $condition = new Conditions\Equal(new Types\String('taste'), 'burger');
-        $condition->adn(new Conditions\Equal(new Types\String('taste'), 'vegetable'));
+        $condition = new Conditions\Equal(new TString('taste'), 'burger');
+        $condition->adn(new Conditions\Equal(new TString('taste'), 'vegetable'));
     }
 }

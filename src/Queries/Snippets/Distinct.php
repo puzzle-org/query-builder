@@ -1,15 +1,17 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class Distinct implements Snippet
 {
     private
         $columnName;
 
-    public function __construct($columnName)
+    public function __construct(?string $columnName)
     {
         if(empty($columnName))
         {
@@ -19,7 +21,7 @@ class Distinct implements Snippet
         $this->columnName = (string) $columnName;
     }
 
-    public function toString()
+    public function toString(): string
     {
         return sprintf('DISTINCT %s', $this->columnName);
     }

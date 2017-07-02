@@ -1,16 +1,19 @@
 <?php
 
-use Muffin\Types;
-use Muffin\Tests\Escapers\SimpleEscaper;
+declare(strict_types = 1);
 
-class FloatTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Types;
+
+use PHPUnit\Framework\TestCase;
+
+class TFloatTest extends TestCase
 {
     /**
      * @dataProvider providerTestFormatString
      */
     public function testFormatString($expected, $value)
     {
-        $type = new Types\Float('column_name');
+        $type = new TFloat('column_name');
 
         $this->assertSame($expected, $type->format($value));
     }

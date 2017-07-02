@@ -1,37 +1,52 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
+use Puzzle\Pieces\StringManipulation;
 
 class Limit implements Snippet
 {
+    use StringManipulation;
+
     private
         $limit;
 
+    /**
+     * @param int|string $limit
+     */
     public function __construct($limit)
     {
-        $this->limit = $this->ensureIsInteger($limit);
+        $this->limit = $this->convertToInteger($limit);
     }
 
-    public function toString()
+    public function toString(): string
     {
-        if(empty($this->limit))
+        if(is_null($this->limit))
         {
             return '';
         }
 
         return sprintf(
-            'LIMIT %s',
+            'LIMIT %d',
             $this->limit
         );
     }
 
-    private function ensureIsInteger($value)
+    private function convertToInteger($value): ?int
     {
-        if(preg_match('~^[\d]+$~', $value))
+        if($this->isConvertibleToString($value) === false)
+        {
+            throw new \InvalidArgumentException("Limit argument must be an integer or an integer wrapped into a string");
+        }
+
+        if(preg_match('~^[\d]+$~', (string) $value))
         {
             return (int) $value;
         }
+
+        return null;
     }
 }

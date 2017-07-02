@@ -1,17 +1,19 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Escaper;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Escaper;
 
 class NullCondition extends AbstractCondition
 {
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         return '';
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return true;
     }

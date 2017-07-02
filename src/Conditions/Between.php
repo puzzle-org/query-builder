@@ -1,25 +1,28 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
 
-use Muffin\Conditions\AbstractCondition;
-use Muffin\Escaper;
+namespace Puzzle\QueryBuilder\Conditions;
+
+use Puzzle\QueryBuilder\Conditions\AbstractCondition;
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Type;
 
 class Between extends AbstractCondition
 {
     protected
-        $type,
+        $column,
         $start,
         $end;
 
-    public function __construct($column, $start, $end)
+    public function __construct(Type $column, $start, $end)
     {
-        $this->type = $column;
+        $this->column = $column;
         $this->start = $start;
         $this->end = $end;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->isEmpty())
         {
@@ -28,15 +31,16 @@ class Between extends AbstractCondition
 
         return sprintf(
             '%s BETWEEN %s AND %s',
-            $this->type->getName(),
+            $this->column->getName(),
             $this->escapeValue($this->start, $escaper),
             $this->escapeValue($this->end, $escaper)
         );
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
-        $columnName = $this->type->getName();
+        $columnName = $this->column->getName();
+
         if(empty($columnName) || empty($this->start) || empty($this->end))
         {
             return true;
@@ -47,9 +51,9 @@ class Between extends AbstractCondition
 
     private function escapeValue($value, Escaper $escaper)
     {
-        $value = $this->type->format($value);
+        $value = $this->column->format($value);
 
-        if($this->type->isEscapeRequired())
+        if($this->column->isEscapeRequired())
         {
             $value = $escaper->escape($value);
         }

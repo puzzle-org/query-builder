@@ -1,11 +1,13 @@
 <?php
 
-namespace Muffin\Conditions\Sets;
+declare(strict_types = 1);
 
-use Muffin\Conditions\AbstractCondition;
-use Muffin\Conditions\CompositeCondition;
-use Muffin\Escaper;
-use Muffin\Condition;
+namespace Puzzle\QueryBuilder\Conditions\Sets;
+
+use Puzzle\QueryBuilder\Conditions\AbstractCondition;
+use Puzzle\QueryBuilder\Conditions\CompositeCondition;
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Condition;
 
 abstract class AbstractSet extends AbstractCondition implements CompositeCondition
 {
@@ -17,7 +19,7 @@ abstract class AbstractSet extends AbstractCondition implements CompositeConditi
         $this->conditions = array();
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->isEmpty())
         {
@@ -29,14 +31,14 @@ abstract class AbstractSet extends AbstractCondition implements CompositeConditi
         return $condition->toString($escaper);
     }
 
-    public function add(Condition $condition)
+    public function add(Condition $condition): self
     {
         $this->conditions[] = $condition;
 
         return $this;
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         foreach($this->conditions as $condition)
         {
@@ -49,7 +51,7 @@ abstract class AbstractSet extends AbstractCondition implements CompositeConditi
         return true;
     }
 
-    private function buildCompositeCondition()
+    private function buildCompositeCondition(): Condition
     {
         $conditions = $this->getNotEmptyConditions();
 
@@ -63,12 +65,12 @@ abstract class AbstractSet extends AbstractCondition implements CompositeConditi
         return $compositeCondition;
     }
 
-    private function getNotEmptyConditions()
+    private function getNotEmptyConditions(): array
     {
         return array_filter($this->conditions, function (Condition $item) {
             return $item->isEmpty() === false;
         });
     }
 
-    abstract protected function joinConditions(Condition $leftCondition, Condition $rightCondition);
+    abstract protected function joinConditions(Condition $leftCondition, Condition $rightCondition): Condition;
 }

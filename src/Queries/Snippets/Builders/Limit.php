@@ -1,8 +1,10 @@
 <?php
 
-namespace Muffin\Queries\Snippets\Builders;
+declare(strict_types = 1);
 
-use Muffin\Queries\Snippets;
+namespace Puzzle\QueryBuilder\Queries\Snippets\Builders;
+
+use Puzzle\QueryBuilder\Queries\Snippets;
 
 trait Limit
 {
@@ -10,14 +12,20 @@ trait Limit
         $limit,
         $offset;
 
-    public function limit($limit)
+    /**
+     * @param int|string $limit
+     */
+    public function limit($limit): self
     {
         $this->limit = new Snippets\Limit($limit);
 
         return $this;
     }
 
-    public function offset($offset)
+    /**
+     * @param int|string $offset
+     */
+    public function offset($offset): self
     {
         if(!$this->limit instanceof Snippets\Limit)
         {
@@ -29,7 +37,7 @@ trait Limit
         return $this;
     }
 
-    private function buildLimit()
+    private function buildLimit(): string
     {
         $limit = $this->buildLimitClause();
 
@@ -44,19 +52,23 @@ trait Limit
         return implode(' ', array_filter($clauses));
     }
 
-    private function buildLimitClause()
+    private function buildLimitClause(): string
     {
         if($this->limit instanceof Snippets\Limit)
         {
             return $this->limit->toString();
         }
+
+        return '';
     }
 
-    private function buildOffsetClause()
+    private function buildOffsetClause(): string
     {
         if($this->offset instanceof Snippets\Offset)
         {
             return $this->offset->toString();
         }
+
+        return '';
     }
 }

@@ -1,15 +1,19 @@
 <?php
 
-use Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-class LimitTest extends PHPUnit_Framework_TestCase
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use PHPUnit\Framework\TestCase;
+
+class LimitTest extends TestCase
 {
     /**
      * @dataProvider providerTestLimit
      */
     public function testLimit($expected, $limit)
     {
-        $qb = new Snippets\Limit($limit);
+        $qb = new Limit($limit);
 
         $this->assertSame($expected, $qb->toString());
     }

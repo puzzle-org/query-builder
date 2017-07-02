@@ -1,11 +1,13 @@
 <?php
 
-namespace Muffin\Conditions\Binaries;
+declare(strict_types = 1);
 
-use Muffin\Conditions\CompositeCondition;
-use Muffin\Condition;
-use Muffin\Escaper;
-use Muffin\Conditions\AbstractCondition;
+namespace Puzzle\QueryBuilder\Conditions\Binaries;
+
+use Puzzle\QueryBuilder\Conditions\CompositeCondition;
+use Puzzle\QueryBuilder\Condition;
+use Puzzle\QueryBuilder\Escaper;
+use Puzzle\QueryBuilder\Conditions\AbstractCondition;
 
 abstract class AbstractCompositeCondition extends AbstractCondition implements CompositeCondition
 {
@@ -19,7 +21,7 @@ abstract class AbstractCompositeCondition extends AbstractCondition implements C
         $this->rightCondition = $rightCondition;
     }
 
-    public function toString(Escaper $escaper)
+    public function toString(Escaper $escaper): string
     {
         if($this->leftCondition->isEmpty())
         {
@@ -34,12 +36,12 @@ abstract class AbstractCompositeCondition extends AbstractCondition implements C
         return $this->buildCondition($escaper);
     }
 
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->leftCondition->isEmpty() && $this->rightCondition->isEmpty();
     }
 
-    protected function buildPartCondition(Condition $condition, Escaper $escaper)
+    protected function buildPartCondition(Condition $condition, Escaper $escaper): string
     {
         $partCondition = $condition->toString($escaper);
 
@@ -51,5 +53,5 @@ abstract class AbstractCompositeCondition extends AbstractCondition implements C
         return $partCondition;
     }
 
-    abstract protected function buildCondition(Escaper $escaper);
+    abstract protected function buildCondition(Escaper $escaper): string;
 }

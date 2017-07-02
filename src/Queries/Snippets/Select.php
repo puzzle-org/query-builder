@@ -1,29 +1,37 @@
 <?php
 
-namespace Muffin\Queries\Snippets;
+declare(strict_types = 1);
 
-use Muffin\Snippet;
+namespace Puzzle\QueryBuilder\Queries\Snippets;
+
+use Puzzle\QueryBuilder\Snippet;
 
 class Select implements Snippet
 {
     private
         $columns;
 
-    public function __construct($columns = array())
+    /**
+     * @param array[string|Selectable] | string|Selectable  $columns
+     */
+    public function __construct($columns = [])
     {
-        $this->columns = array();
+        $this->columns = [];
 
         $this->addColumns($columns);
     }
 
-    public function select($columns)
+    /**
+     * @param array[string|Selectable] | string|Selectable  $columns
+     */
+    public function select($columns): self
     {
         $this->addColumns($columns);
 
         return $this;
     }
 
-    public function toString()
+    public function toString(): string
     {
         if(empty($this->columns))
         {
@@ -50,7 +58,7 @@ class Select implements Snippet
         return implode(', ', array_unique($columns));
     }
 
-    private function addColumns($columns)
+    private function addColumns($columns): void
     {
         $columns = array_filter($this->ensureIsArray($columns));
 
@@ -70,7 +78,7 @@ class Select implements Snippet
         }
     }
 
-    private function ensureIsArray($select)
+    private function ensureIsArray($select): array
     {
         if(! is_array($select))
         {

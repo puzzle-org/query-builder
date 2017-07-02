@@ -1,10 +1,12 @@
 <?php
 
-namespace Muffin\Conditions;
+declare(strict_types = 1);
+
+namespace Puzzle\QueryBuilder\Conditions;
 
 class Greater extends AbstractComparisonOperatorCondition
 {
-    protected function getConditionOperator()
+    protected function getConditionOperator(): string
     {
         return '>';
     }
