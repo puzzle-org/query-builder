@@ -12,7 +12,6 @@ filter:
         - 'tests/*'
 checks:
   php: true
-  javascript: false
   
 coding_style:
   php: {}
