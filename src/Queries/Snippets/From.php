@@ -6,7 +6,7 @@ namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use Puzzle\QueryBuilder\Snippet;
 
-class From implements Snippet
+class From implements Snippet, NeedTableAware
 {
     private
         $tableName;
@@ -27,5 +27,15 @@ class From implements Snippet
     public function toString(): string
     {
         return sprintf('FROM %s', $this->tableName->toString());
+    }
+
+    public function hasNeededTable(string $tableName): bool
+    {
+        if($this->tableName->getName() === $tableName || $this->tableName->getAlias() === $tableName)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
