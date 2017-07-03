@@ -7,6 +7,7 @@ namespace Puzzle\QueryBuilder\Queries;
 use Puzzle\QueryBuilder\Query;
 use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class Update implements Query
 {
@@ -21,10 +22,7 @@ class Update implements Query
         $updatePart,
         $sets;
 
-    /**
-     * @param Snippets\TableName|string|null $table
-     */
-    public function __construct($table = null, ?string $alias = null)
+    public function __construct(string $table = null, ?string $alias = null)
     {
         $this->updatePart = new Snippets\Update();
         $this->where = new Snippets\Where();
@@ -51,12 +49,11 @@ class Update implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    /**
-     * @param Snippets\TableName|string $table
-     */
-    public function update($table, ?string $alias = null): self
+    public function update(string $table, ?string $alias = null): self
     {
-        $this->updatePart->addTable($table, $alias);
+        $this->updatePart->addTable(
+            new Table($table, $alias)
+        );
 
         return $this;
     }

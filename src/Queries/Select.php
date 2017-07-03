@@ -10,6 +10,7 @@ use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
 use Puzzle\QueryBuilder\Queries\Snippets\Having;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class Select implements Query
 {
@@ -56,12 +57,11 @@ class Select implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    /**
-     * @param Snippets\TableName|string $table
-     */
-    public function from($table, ?string $alias = null): self
+    public function from(string $table, ?string $alias = null): self
     {
-        $this->from = new Snippets\From($table, $alias);
+        $this->from = new Snippets\From(
+            new Table($table, $alias)
+        );
 
         return $this;
     }

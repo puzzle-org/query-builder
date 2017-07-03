@@ -5,29 +5,20 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class Update implements Snippet
 {
     private
         $tables;
 
-    public function __construct($table = null, ?string $alias = null)
+    public function __construct()
     {
-        $this->tables = array();
-
-        if(! empty($table))
-        {
-            $this->addTable($table, $alias);
-        }
+        $this->tables = [];
     }
 
-    public function addTable($table, ?string $alias = null): self
+    public function addTable(Table $table): self
     {
-        if(! $table instanceof TableName)
-        {
-            $table = new TableName($table, $alias);
-        }
-
         $this->tables[] = $table;
 
         return $this;
@@ -44,7 +35,7 @@ class Update implements Snippet
 
         foreach($this->tables as $table)
         {
-            $tables[] = $table->toString();
+            $tables[] = (string) $table;
         }
 
         $tablesString = implode(', ', array_filter($tables));

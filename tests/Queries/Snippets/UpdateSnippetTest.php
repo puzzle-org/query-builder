@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class UpdateSnippetTest extends TestCase
 {
@@ -13,7 +14,8 @@ class UpdateSnippetTest extends TestCase
      */
     public function testUpdate($expected, $tableName, $alias)
     {
-        $qb = new Update($tableName, $alias);
+        $qb = new Update();
+        $qb->addTable(new Table($tableName, $alias));
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -31,53 +33,22 @@ class UpdateSnippetTest extends TestCase
 
     public function testUpdateUsingTableNamePart()
     {
-        $tableName = new TableName('ponyz', 'p');
-
-        $qb = new Update($tableName);
+        $qb = new Update();
+        $qb->addTable(new Table('ponyz', 'p'));
 
         $this->assertSame($qb->toString(), 'UPDATE ponyz AS p');
     }
 
     public function testUpdateAddTable()
     {
-        $qb = new Update('ponyz', 'p');
+        $qb = new Update();
 
         $qb
-            ->addTable('burger', 'b')
-            ->addTable('unicorn', 'u')
+            ->addTable(new Table('ponyz', 'p'))
+            ->addTable(new Table('burger', 'b'))
+            ->addTable(new Table('unicorn', 'u'))
         ;
 
         $this->assertSame($qb->toString(), 'UPDATE ponyz AS p, burger AS b, unicorn AS u');
-    }
-
-    /**
-     * @dataProvider providerTestEmptyTableName
-     * @expectedException \InvalidArgumentException
-     */
-    public function testEmptyTableNameUsingSetter($expected, $tableName)
-    {
-        $qb = new Update();
-
-        $qb->addTable($tableName);
-
-        $qb->toString();
-    }
-
-    /**
-     * @dataProvider providerTestEmptyTableName
-     */
-    public function testEmptyTableNameUsingConstructor($expected, $tableName)
-    {
-        $qb = new Update($tableName);
-
-        $this->assertSame($expected, $qb->toString());
-    }
-
-    public function providerTestEmptyTableName()
-    {
-        return array(
-            'empty table name' => array('', ''),
-            'null table name' => array('', null),
-        );
     }
 }

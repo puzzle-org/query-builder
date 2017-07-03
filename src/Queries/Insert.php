@@ -6,6 +6,7 @@ namespace Puzzle\QueryBuilder\Queries;
 
 use Puzzle\QueryBuilder\Query;
 use Puzzle\QueryBuilder\Traits\EscaperAware;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class Insert implements Query
 {
@@ -35,9 +36,9 @@ class Insert implements Query
         return implode(' ', $queryParts);
     }
 
-    public function insert(?string $table): self
+    public function insert(string $table): self
     {
-        $this->insertPart = new Snippets\TableName($table);
+        $this->insertPart = new Table($table);
 
         return $this;
     }
@@ -51,7 +52,7 @@ class Insert implements Query
 
     private function buildInsertString(): string
     {
-        return sprintf('INSERT INTO %s', $this->insertPart->toString());
+        return sprintf('INSERT INTO %s', (string) $this->insertPart);
     }
 
     private function buildValuesString(): string

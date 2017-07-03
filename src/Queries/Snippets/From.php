@@ -5,27 +5,20 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class From implements Snippet
 {
     private
         $tableName;
 
-    /**
-     * @param TableName|string $table
-     */
-    public function __construct($table, ?string $alias = null)
+    public function __construct(Table $table)
     {
-        if(! $table instanceof TableName)
-        {
-            $table = new TableName($table, $alias);
-        }
-
         $this->tableName = $table;
     }
 
     public function toString(): string
     {
-        return sprintf('FROM %s', $this->tableName->toString());
+        return sprintf('FROM %s', (string) $this->tableName);
     }
 }

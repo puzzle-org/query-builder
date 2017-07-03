@@ -8,6 +8,7 @@ use Puzzle\QueryBuilder\Query;
 use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 class Delete implements Query
 {
@@ -21,10 +22,7 @@ class Delete implements Query
     private
         $from;
 
-    /**
-     * @param TableName|string $table
-     */
-    public function __construct($table = null, ?string $alias = null)
+    public function __construct(?string $table = null, ?string $alias = null)
     {
         if(!empty($table))
         {
@@ -49,12 +47,11 @@ class Delete implements Query
         return implode(' ', array_filter($queryParts));
     }
 
-    /**
-     * @param TableName|string $table
-     */
-    public function from($table, ?string $alias = null): self
+    public function from(string $table, ?string $alias = null): self
     {
-        $this->from = new Snippets\From($table, $alias);
+        $this->from = new Snippets\From(
+            new Table($table, $alias)
+        );
 
         return $this;
     }
