@@ -10,8 +10,9 @@ use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
 use Puzzle\QueryBuilder\Queries\Snippets\Having;
+use Puzzle\QueryBuilder\QueryPartAware;
 
-class Select implements Query
+class Select implements Query, QueryPartAware
 {
     use
         EscaperAware,
@@ -19,7 +20,8 @@ class Select implements Query
         Builders\Where,
         Builders\GroupBy,
         Builders\OrderBy,
-        Builders\Limit;
+        Builders\Limit,
+        Builders\QueryPart;
 
     private
         $select,
@@ -42,6 +44,10 @@ class Select implements Query
 
     public function toString(): string
     {
+        $snippets = $this->joins;
+        $snippets[] = $this->from;
+        $this->ensureNeededTablesArePresent($snippets);
+
         $queryParts = array(
             $this->buildSelect(),
             $this->buildFrom(),

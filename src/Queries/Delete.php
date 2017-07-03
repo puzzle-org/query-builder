@@ -8,15 +8,17 @@ use Puzzle\QueryBuilder\Query;
 use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
+use Puzzle\QueryBuilder\QueryPartAware;
 
-class Delete implements Query
+class Delete implements Query, QueryPartAware
 {
     use
         EscaperAware,
         Builders\Join,
         Builders\Where,
         Builders\OrderBy,
-        Builders\Limit;
+        Builders\Limit,
+        Builders\QueryPart;
 
     private
         $from;
@@ -37,6 +39,10 @@ class Delete implements Query
 
     public function toString(): string
     {
+        $snippets = $this->joins;
+        $snippets[] = $this->from;
+        $this->ensureNeededTablesArePresent($snippets);
+
         $queryParts = array(
             'DELETE',
             $this->buildFrom(),

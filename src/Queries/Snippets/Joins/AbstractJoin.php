@@ -7,8 +7,9 @@ namespace Puzzle\QueryBuilder\Queries\Snippets\Joins;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Join;
 use Puzzle\QueryBuilder\Queries\Snippets;
+use Puzzle\QueryBuilder\Queries\Snippets\NeedTableAware;
 
-abstract class AbstractJoin implements Join, Snippet
+abstract class AbstractJoin implements Join, Snippet, NeedTableAware
 {
     private
         $table,
@@ -53,6 +54,15 @@ abstract class AbstractJoin implements Join, Snippet
         $joinQueryPart .= $this->buildUsingConditionClause();
 
         return $joinQueryPart;
+    }
+
+    public function hasNeededTable(string $tableName): bool
+    {
+        if($this->table->getName() === $tableName || $this->table->getAlias() === $tableName)
+        {
+            return true;
+        }
+        return false;
     }
 
     abstract protected function getJoinDeclaration(): string;
