@@ -6,23 +6,15 @@ namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use Puzzle\QueryBuilder\Snippet;
 
-class Count implements Snippet, Selectable
+class Count implements Snippet, SelectExpression
 {
     private
-        $columnName,
+        $expression,
         $alias;
 
-    /**
-     * @param Snippet|string $columnName
-     */
-    public function __construct($columnName, ?string $alias = null)
+    public function __construct(CountExpression $expression, ?string $alias = null)
     {
-        if((! $columnName instanceof Snippet) && empty($columnName))
-        {
-            throw new \InvalidArgumentException('Empty column name.');
-        }
-
-        $this->columnName = $columnName;
+        $this->expression = $expression;
         $this->alias = $alias;
     }
 
@@ -33,17 +25,20 @@ class Count implements Snippet, Selectable
             $this->buildAliasSnippet()
         )));
     }
+    
+    public function equals(SelectExpression $expr): bool
+    {
+        if($expr instanceof self)
+        {
+            return $this->toString() === $expr->toString();
+        }
+        
+        return false;
+    }
 
     private function buildCountSnippet(): string
     {
-        $columnName = $this->columnName;
-
-        if($columnName instanceof Snippet)
-        {
-            $columnName = $columnName->toString();
-        }
-
-        return sprintf('COUNT(%s)', $columnName);
+        return sprintf('COUNT(%s)', $this->expression->toString());
     }
 
     private function buildAliasSnippet(): string

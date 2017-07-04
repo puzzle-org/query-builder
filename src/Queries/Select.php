@@ -11,10 +11,16 @@ use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Builders;
 use Puzzle\QueryBuilder\Queries\Snippets\Having;
 use Puzzle\QueryBuilder\ValueObjects\Table;
+use Puzzle\QueryBuilder\Queries\Snippets\SelectExpressionArgument;
+use Puzzle\QueryBuilder\Queries\Snippets\SelectExpression;
+use Puzzle\Pieces\StringManipulation;
+use Puzzle\QueryBuilder\ValueObjects\Column;
+use Puzzle\QueryBuilder\Collections\SelectExpressionCollections\DuplicateAllowedSelectExpressionCollection;
 
 class Select implements Query
 {
     use
+        StringManipulation,
         EscaperAware,
         Builders\Join,
         Builders\Where,
@@ -28,7 +34,7 @@ class Select implements Query
         $having;
 
     /**
-     * @param array[string|Selectable] | string|Selectable  $columns
+     * @param array[string]|string $columns
      */
     public function __construct($columns = [])
     {
@@ -67,13 +73,53 @@ class Select implements Query
     }
 
     /**
-     * @param array[string|Selectable] | string|Selectable  $columns
+     * @param array[string]|string $expression
      */
-    public function select($columns): self
+    public function select($expression): self
     {
-        $this->select->select($columns);
+        $this->select->select(
+            $this->convertSelectExpression($expression)
+        );
 
         return $this;
+    }
+    
+    /**
+     * @param array[string]|string $expression
+     */
+    private function convertSelectExpression($expression): SelectExpressionArgument
+    {
+        if(! is_array($expression))
+        {
+            return $this->convertOneSelectExpression($expression);
+        }
+        
+        $collection = new DuplicateAllowedSelectExpressionCollection();
+        
+        foreach($expression as $expr)
+        {
+            $collection->add($this->convertOneSelectExpression($expr));
+        }
+        
+        return $collection;
+    }
+    
+    /**
+     * @param string $expression
+     */
+    private function convertOneSelectExpression($expression): SelectExpression
+    {
+        if($expression instanceof SelectExpressionArgument)
+        {
+            return $expression;
+        }
+        
+        if($this->isConvertibleToString($expression))
+        {
+            return new Column($expression);
+        }
+        
+        throw new \InvalidArgumentException("Invalid select expression");
     }
 
     public function having(Condition $condition): self

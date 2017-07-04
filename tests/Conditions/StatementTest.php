@@ -9,6 +9,7 @@ use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
 use Puzzle\QueryBuilder\Queries;
 use PHPUnit\Framework\TestCase;
 use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\Queries\Snippets\Wildcard;
 
 class StatementTest extends TestCase
 {
@@ -33,7 +34,7 @@ class StatementTest extends TestCase
     public function providerTestStatement()
     {
         $condition = new Different(new TString('taste'), 'vegetable');
-        $subQuery = (new Queries\Select('*'))->from('burger')->where($condition);
+        $subQuery = (new Queries\Select(new Wildcard()))->from('burger')->where($condition);
 
         return array(
             'string' => array("lorem ipsum", "lorem ipsum"),

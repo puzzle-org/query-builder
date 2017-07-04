@@ -4,25 +4,20 @@ declare(strict_types = 1);
 
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
-use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\ValueObjects\Column;
 
-class Distinct implements Snippet
+class Distinct implements CountExpression
 {
     private
-        $columnName;
+        $column;
 
-    public function __construct(?string $columnName)
+    public function __construct(Column $column)
     {
-        if(empty($columnName))
-        {
-            throw new \InvalidArgumentException('Empty column name.');
-        }
-
-        $this->columnName = (string) $columnName;
+        $this->column = $column;
     }
 
     public function toString(): string
     {
-        return sprintf('DISTINCT %s', $this->columnName);
+        return sprintf('DISTINCT %s', $this->column->toString());
     }
 }

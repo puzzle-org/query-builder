@@ -5,57 +5,64 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\ValueObjects\Column;
+use Puzzle\QueryBuilder\Collections\SelectExpressionCollections\DuplicateAllowedSelectExpressionCollection;
 
 class SelectSnippetTest extends TestCase
 {
     /**
-     * @dataProvider providerTestSelectViaConstructor
+     * @dataProvider providerTestSelect
      */
-    public function testSelectViaConstructor($expected, $columns)
-    {
-        $select = new Select($columns);
-
-        $this->assertSame($expected, $select->toString());
-    }
-
-    /**
-     * @dataProvider providerTestSelectViaConstructor
-     */
-    public function testSelectViaSetter($expected, $columns)
+    public function testSelect($expected, $expressions)
     {
         $select = new Select();
-        $select->select($columns);
+        $select->select($expressions);
 
         $this->assertSame($expected, $select->toString());
     }
 
-    public function providerTestSelectViaConstructor()
+    public function providerTestSelect()
     {
-        return array(
-            'single column'      => array('SELECT name', 'name'),
-            'multiple column'    => array('SELECT name, color, age', array('name', 'color', 'age')),
-            'duplicated columns' => array('SELECT name, color, age', array('name', 'color', 'age', 'name')),
-            'all columns'        => array('SELECT *', '*'),
-        );
+        return [
+            'single expression' => [
+                'SELECT name',
+                new Column('name')
+            ],
+            'multiple expression' => [
+                'SELECT name, color, age',
+                new DuplicateAllowedSelectExpressionCollection([
+                    new Column('name'),
+                    new Column('color'),
+                    new Column('age'),
+                ])
+            ],
+            'duplicated expressions' => [
+                'SELECT name, color, age',
+                new DuplicateAllowedSelectExpressionCollection([
+                    new Column('name'),
+                    new Column('color'),
+                    new Column('age'),
+                    new Column('name'),
+                ])
+            ],
+            'all expressions' => [
+                'SELECT *',
+                new Wildcard(),
+            ],
+        ];
     }
 
     public function testAddColumnsOnTheFly()
     {
-        $select = new Select('id');
+        $select = new Select();
         $select
-            ->select('name')
-            ->select(array('color', 'taste'));
+            ->select(new Column('id'))
+            ->select(new Column('name'))
+            ->select(new DuplicateAllowedSelectExpressionCollection([
+                new Column('color'),
+                new Column('taste')
+            ]));
 
         $this->assertSame('SELECT id, name, color, taste', $select->toString());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidColumnName()
-    {
-        $select = new Select(array('poney', new \stdClass()));
-
-        $select->toString();
     }
 }

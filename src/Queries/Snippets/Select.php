@@ -5,37 +5,30 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use Puzzle\QueryBuilder\Snippet;
+use Puzzle\QueryBuilder\Collections\SelectExpressionCollections\UniqueSelectExpressionCollection;
 
 class Select implements Snippet
 {
     private
-        $columns;
+        $expressions;
 
-    /**
-     * @param array[string|Selectable] | string|Selectable  $columns
-     */
-    public function __construct($columns = [])
+    public function __construct()
     {
-        $this->columns = [];
-
-        $this->addColumns($columns);
+        $this->expressions = new UniqueSelectExpressionCollection();
     }
 
-    /**
-     * @param array[string|Selectable] | string|Selectable  $columns
-     */
-    public function select($columns): self
+    public function select(SelectExpressionArgument $expression): self
     {
-        $this->addColumns($columns);
-
+        $this->expressions->add($expression);
+    
         return $this;
     }
 
     public function toString(): string
     {
-        if(empty($this->columns))
+        if(count($this->expressions) === 0)
         {
-            throw new \LogicException('No columns defined for SELECT clause');
+            throw new \LogicException('No expressions defined for SELECT clause');
         }
 
         return sprintf('SELECT %s', $this->buildColumnsString());
@@ -43,48 +36,13 @@ class Select implements Snippet
 
     private function buildColumnsString()
     {
-        $columns = array();
+        $expressions = array();
 
-        foreach($this->columns as $column)
+        foreach($this->expressions as $expression)
         {
-            if($column instanceof Selectable)
-            {
-                $column = $column->toString();
-            }
-
-            $columns[] = $column;
+            $expressions[] = $expression->toString();
         }
 
-        return implode(', ', array_unique($columns));
-    }
-
-    private function addColumns($columns): void
-    {
-        $columns = array_filter($this->ensureIsArray($columns));
-
-        $this->validateColumns($columns);
-
-        $this->columns = array_merge($this->columns, $columns);
-    }
-
-    private function validateColumns($columns)
-    {
-        foreach($columns as $column)
-        {
-            if(! is_string($column) && (!$column instanceof Selectable))
-            {
-                throw new \InvalidArgumentException('Column name must be a string.');
-            }
-        }
-    }
-
-    private function ensureIsArray($select): array
-    {
-        if(! is_array($select))
-        {
-            $select = array($select);
-        }
-
-        return $select;
+        return implode(', ', $expressions);
     }
 }

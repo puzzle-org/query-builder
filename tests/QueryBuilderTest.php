@@ -12,6 +12,7 @@ use Puzzle\QueryBuilder\Queries\Snippets\Distinct;
 use PHPUnit\Framework\TestCase;
 use Puzzle\QueryBuilder\Traits\EscaperAware;
 use Puzzle\QueryBuilder\Types\TString;
+use Puzzle\QueryBuilder\ValueObjects\Column;
 
 class QueryBuilderTest extends TestCase
 {
@@ -88,7 +89,12 @@ class QueryBuilderTest extends TestCase
             ->from('burger', 'b');
 
         $select = new Queries\Select(array(
-            new Queries\Snippets\Count(new Queries\Snippets\Distinct('id'), 'total'),
+            new Queries\Snippets\Count(
+                new Queries\Snippets\Distinct(
+                    new Column('id')
+                ),
+                'total'
+            ),
             'b.type',
         ));
         $select->setEscaper($this->escaper);

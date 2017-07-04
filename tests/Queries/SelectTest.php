@@ -9,6 +9,7 @@ use Puzzle\QueryBuilder\Escapers\AlwaysQuoteEscaper;
 use PHPUnit\Framework\TestCase;
 use Puzzle\QueryBuilder\Types\TString;
 use Puzzle\QueryBuilder\Types\TInt;
+use Puzzle\QueryBuilder\ValueObjects\Column;
 
 class SelectTest extends TestCase
 {
@@ -321,7 +322,7 @@ class SelectTest extends TestCase
         $query = $this->newSelect();
         $query
             ->select(array(
-                new Snippets\Count(new Snippets\Distinct('votes')),
+                new Snippets\Count(new Snippets\Distinct(new Column('votes'))),
                 'id',
                 'name'
             ))

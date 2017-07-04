@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
-interface Selectable
-{
+use Puzzle\QueryBuilder\Snippet;
 
+interface CountExpression extends Snippet
+{
 }

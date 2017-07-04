@@ -7,6 +7,7 @@ namespace Puzzle\QueryBuilder\Queries\Snippets\Joins;
 use Puzzle\QueryBuilder\Snippet;
 use Puzzle\QueryBuilder\Queries\Snippets\Join;
 use Puzzle\QueryBuilder\Queries\Snippets;
+use Puzzle\QueryBuilder\ValueObjects\Table;
 
 abstract class AbstractJoin implements Join, Snippet
 {
@@ -15,9 +16,9 @@ abstract class AbstractJoin implements Join, Snippet
         $using,
         $on;
 
-    public function __construct(string $table, ?string $alias = null)
+    public function __construct(string $name, ?string $alias = null)
     {
-        $this->table = new Snippets\TableName($table, $alias);
+        $this->table = new Table($name, $alias);
         $this->on = [];
     }
 
@@ -46,7 +47,7 @@ abstract class AbstractJoin implements Join, Snippet
         $joinQueryPart = sprintf(
             '%s %s',
             $this->getJoinDeclaration(),
-            $this->table->toString()
+            (string) $this->table
         );
 
         $joinQueryPart .= $this->buildOnConditionClause();

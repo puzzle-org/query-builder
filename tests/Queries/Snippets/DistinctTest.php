@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Puzzle\QueryBuilder\Queries\Snippets;
 
 use PHPUnit\Framework\TestCase;
+use Puzzle\QueryBuilder\ValueObjects\Column;
 
 class DistinctTest extends TestCase
 {
@@ -13,7 +14,7 @@ class DistinctTest extends TestCase
      */
     public function testDistinct($expected, $columnName)
     {
-        $qb = new Distinct($columnName);
+        $qb = new Distinct(new Column($columnName));
 
         $this->assertSame($qb->toString(), $expected);
     }
@@ -22,23 +23,6 @@ class DistinctTest extends TestCase
     {
         return array(
             array('DISTINCT id', 'id'),
-        );
-    }
-
-    /**
-     * @dataProvider providerTestInvalidDistinct
-     * @expectedException \InvalidArgumentException
-     */
-    public function testInvalidDistinct($columnName)
-    {
-        $qb = new Distinct($columnName);
-    }
-
-    public function providerTestInvalidDistinct()
-    {
-        return array(
-            array(''),
-            array(null),
         );
     }
 }

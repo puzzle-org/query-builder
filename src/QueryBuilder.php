@@ -9,6 +9,8 @@ use Puzzle\QueryBuilder\Queries\Insert;
 use Puzzle\QueryBuilder\Queries\Select;
 use Puzzle\QueryBuilder\Queries\Update;
 use Puzzle\QueryBuilder\Queries\Snippets;
+use Puzzle\QueryBuilder\ValueObjects\Column;
+use Puzzle\QueryBuilder\Queries\Snippets\CountExpression;
 
 class QueryBuilder
 {
@@ -38,15 +40,20 @@ class QueryBuilder
     }
 
     /**
-     * @param Snippet|string $columnName
+     * @param CountExpression|string $columnName
      */
-    public function count($columnName, ?string $alias = null): Snippets\Count
+    public function count($countExpr, ?string $alias = null): Snippets\Count
     {
-        return (new Snippets\Count($columnName, $alias));
+        if(! $countExpr instanceof CountExpression)
+        {
+            $countExpr = new Column($countExpr);
+        }
+        
+        return (new Snippets\Count($countExpr, $alias));
     }
 
     public function distinct(string $columnName): Snippets\Distinct
     {
-        return (new Snippets\Distinct($columnName));
+        return (new Snippets\Distinct(new Column($columnName)));
     }
 }
